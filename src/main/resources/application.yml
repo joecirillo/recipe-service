@@ -1,11 +1,11 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/recipe-service
+    url: jdbc:postgresql://localhost:5432/Foodies_Finds_DB
     username: postgres
     password: LuckyHusky
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
