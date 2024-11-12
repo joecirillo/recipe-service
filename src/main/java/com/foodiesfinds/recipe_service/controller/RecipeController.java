@@ -77,4 +77,17 @@ public class RecipeController {
     );
   }
 
+  @GetMapping("search/{query}")
+  public ResponseEntity<Response> searchRecipe(@PathVariable("query") String query) {
+    return ResponseEntity.ok(
+        Response.builder()
+            .timeStamp(now())
+            .data(Map.of("queried", recipeService.search(query)))
+            .message("Recipe queried")
+            .status(OK)
+            .statusCode(OK.value())
+            .build()
+    );
+  }
+
 }

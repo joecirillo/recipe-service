@@ -4,6 +4,7 @@ import com.foodiesfinds.recipe_service.repository.RecipeRepository;
 import com.foodiesfinds.recipe_service.service.RecipeService;
 import jakarta.transaction.Transactional;
 import java.util.Collection;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -46,5 +47,13 @@ public class RecipeServiceImpl implements RecipeService {
     log.info("Deleting recipe by id: {}", id);
     recipeRepository.deleteById(id);
     return Boolean.TRUE;
+  }
+
+  @Override
+  public Collection<Recipe> search(String query) {
+    return recipeRepository.findAll().stream()
+        .filter(recipe -> recipe.getRecipeName().contains(query)
+            || recipe.getCuisine().contains(query))
+        .collect(Collectors.toList());
   }
 }

@@ -15,4 +15,6 @@ public interface RecipeService {
 
   Boolean delete(Long id);
 
+  Collection<Recipe> search(String query);
+
 }
