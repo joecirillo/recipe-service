@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -77,8 +78,8 @@ public class RecipeController {
     );
   }
 
-  @GetMapping("search/{query}")
-  public ResponseEntity<Response> searchRecipe(@PathVariable("query") String query) {
+  @GetMapping("/search")
+  public ResponseEntity<Response> searchRecipe(@RequestParam("query") String query) {
     return ResponseEntity.ok(
         Response.builder()
             .timeStamp(now())
