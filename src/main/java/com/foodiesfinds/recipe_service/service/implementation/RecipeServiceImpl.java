@@ -4,6 +4,8 @@ import com.foodiesfinds.recipe_service.repository.RecipeRepository;
 import com.foodiesfinds.recipe_service.service.RecipeService;
 import jakarta.transaction.Transactional;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,10 +52,8 @@ public class RecipeServiceImpl implements RecipeService {
   }
 
   @Override
-  public Collection<Recipe> search(String query) {
-    return recipeRepository.findAll().stream()
-        .filter(recipe -> recipe.getRecipeName().contains(query)
-            || recipe.getCuisine().contains(query))
-        .collect(Collectors.toList());
+  public List<Recipe> search(String query) {
+    return recipeRepository.findByRecipeNameContainingIgnoreCase(query);
   }
+
 }

@@ -2,6 +2,7 @@ package com.foodiesfinds.recipe_service.service;
 
 import com.foodiesfinds.recipe_service.model.Recipe;
 import java.util.Collection;
+import java.util.List;
 
 public interface RecipeService {
 
@@ -15,6 +16,6 @@ public interface RecipeService {
 
   Boolean delete(Long id);
 
-  Collection<Recipe> search(String query);
+  List<Recipe> search(String query);
 
 }
