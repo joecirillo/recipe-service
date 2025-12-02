@@ -1,4 +1,4 @@
-package com.foodiesfinds.recipe_service.model;
+package com.foodiesfinds.recipe_service.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
