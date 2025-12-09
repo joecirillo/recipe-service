@@ -43,8 +43,13 @@ public class Recipe {
   @Column(length = 255)
   private String author;
 
-  @Column(length = 255)
-  private String cuisine;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(
+      name = "cuisine_id",
+      nullable = false,
+      foreignKey = @ForeignKey(name = "fk_recipe_cuisine_id")
+  )
+  private Cuisine cuisine;
 
   @NotNull
   private short calories;

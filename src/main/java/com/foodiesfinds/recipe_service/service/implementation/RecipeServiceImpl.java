@@ -1,14 +1,17 @@
 package com.foodiesfinds.recipe_service.service.implementation;
-import com.foodiesfinds.recipe_service.model.Recipe;
+import com.foodiesfinds.recipe_service.common.exception.NotFoundException;
+import com.foodiesfinds.recipe_service.dto.RecipeDTO;
+import com.foodiesfinds.recipe_service.entity.Recipe;
+import com.foodiesfinds.recipe_service.mapper.RecipeMapper;
 import com.foodiesfinds.recipe_service.repository.RecipeRepository;
 import com.foodiesfinds.recipe_service.service.RecipeService;
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -18,42 +21,58 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class RecipeServiceImpl implements RecipeService {
 
+
   private final RecipeRepository recipeRepository;
 
-  @Override
-  public Recipe create(Recipe recipe) {
+  @Autowired
+  private final RecipeMapper recipeMapper;
+
+  public RecipeDTO save(RecipeDTO recipe) {
     log.info("Saving new recipe: {}", recipe.getRecipeName());
-    return recipeRepository.save(recipe);
+
+    return recipeMapper.toDTO(recipeRepository.save(recipeMapper.toEntity(recipe)));
   }
 
   @Override
-  public Collection<Recipe> list(int limit) {
+  public Collection<RecipeDTO> list(int limit) {
     log.info("Fetching the first {} recipes", limit);
-    return recipeRepository.findAll(PageRequest.of(0, limit)).toList();
+    List<Recipe> recipes = recipeRepository.findAll(PageRequest.of(0, limit)).toList();
+    List<RecipeDTO> recipesDTO = new ArrayList<>();
+    recipesDTO = recipes.stream()
+        .map(recipeMapper::toDTO)
+        .toList();
+    return recipesDTO.stream().toList();
   }
 
   @Override
-  public Recipe get(Long id) {
+  public RecipeDTO get(Long id) {
     log.info("Fetching recipe by id: {}", id);
-    return recipeRepository.findById(id).get();
+    Recipe recipeById = recipeRepository.findById(id)
+        .orElseThrow(() -> new NotFoundException());
+    return recipeMapper.toDTO(recipeById);
   }
 
   @Override
-  public Recipe update(Recipe recipe) {
+  public RecipeDTO update(RecipeDTO recipe) {
     log.info("Updating recipe: {}", recipe.getRecipeName());
-    return recipeRepository.save(recipe);
+    return recipeMapper.toDTO(recipeRepository.save(recipeMapper.toEntity(recipe)));
   }
 
   @Override
-  public Boolean delete(Long id) {
+  public void delete(Long id) throws NotFoundException {
     log.info("Deleting recipe by id: {}", id);
+    recipeRepository.findById(id)
+        .orElseThrow(() -> new NotFoundException());
     recipeRepository.deleteById(id);
-    return Boolean.TRUE;
   }
 
   @Override
-  public List<Recipe> search(String query) {
-    return recipeRepository.findByRecipeNameContainingIgnoreCase(query);
+  public List<RecipeDTO> search(String query) {
+    List<Recipe> recipes = recipeRepository.findByRecipeNameContainingIgnoreCase(query);
+    return recipes.stream()
+        .peek(recipe -> log.info("Mapped recipe to DTO: {}", recipe.getRecipeName()))
+        .map(recipeMapper::toDTO)
+        .toList();
   }
 
 }

@@ -4,10 +4,12 @@ import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
-import com.foodiesfinds.recipe_service.model.Recipe;
-import com.foodiesfinds.recipe_service.model.Response;
+import com.foodiesfinds.recipe_service.dto.RecipeDTO;
+import com.foodiesfinds.recipe_service.entity.Recipe;
+import com.foodiesfinds.recipe_service.dto.Response;
 import com.foodiesfinds.recipe_service.service.implementation.RecipeServiceImpl;
 import jakarta.validation.Valid;
+import java.net.URI;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +17,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 
 @RestController
@@ -41,15 +45,19 @@ public class RecipeController {
   }
 
   @PostMapping("/save")
-  public ResponseEntity<Response> saveRecipe(@RequestBody  @Valid Recipe recipe) {
-    return ResponseEntity.ok
-        (Response.builder()
-            .timeStamp(now())
-            .data(Map.of("recipes", recipeService.create(recipe)))
-            .message("Recipe created")
-            .status(CREATED)
-            .statusCode(CREATED.value())
-            .build());
+  public ResponseEntity<RecipeDTO> saveRecipe(@RequestBody @Valid RecipeDTO recipe) {
+
+    RecipeDTO savedRecipe = recipeService.save(recipe);
+
+    java.net.URI location = ServletUriComponentsBuilder
+        .fromCurrentRequestUri()
+        .path("/{id}")
+        .buildAndExpand(savedRecipe.getId())
+        .toUri();
+
+    return ResponseEntity
+        .created(location)
+        .body(savedRecipe);
   }
 
   @GetMapping("/get/{id}")
@@ -65,17 +73,25 @@ public class RecipeController {
     );
   }
 
-  @DeleteMapping("/delete/{id}")
-  public ResponseEntity<Response> deleteRecipe(@PathVariable("id") Long id) {
+  @PutMapping("/update")
+  public ResponseEntity<Response> updateRecipe(@RequestBody @Valid RecipeDTO recipe) {
+    recipeService.update(recipe);
     return ResponseEntity.ok(
         Response.builder()
             .timeStamp(now())
-            .data(Map.of("deleted", recipeService.delete(id)))
-            .message("Recipe deleted")
+            .data(Map.of("recipe", recipeService.update(recipe)))
+            .message("Recipe updated")
             .status(OK)
             .statusCode(OK.value())
             .build()
     );
+  }
+
+
+  @DeleteMapping("/delete/{id}")
+  public ResponseEntity<Void> deleteRecipe(@PathVariable("id") Long id) {
+    recipeService.delete(id);
+    return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/search")

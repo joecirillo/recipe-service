@@ -8,29 +8,45 @@ import com.foodiesfinds.recipe_service.entity.Recipe;
 import com.foodiesfinds.recipe_service.entity.RecipeIngredient;
 import com.foodiesfinds.recipe_service.entity.RecipeInstructionStep;
 import com.foodiesfinds.recipe_service.entity.RecipeTag;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 import org.springframework.stereotype.Component;
 
 @Component
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",
+    uses = {IngredientMapper.class},
+    unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RecipeMapper {
 
-  @Mapping(source = "recipeName", target = "recipeName")
-  RecipeDTO toRecipeDTO(Recipe recipe);
+  @Mapping(target = "ingredients", source = "ingredients")
+  @Mapping(target = "steps", source = "steps")
+  @Mapping(target = "tags", source = "tags")
+  @Mapping(source = "cuisine.cuisineId", target = "cuisineId")
+  @Mapping(source = "cuisine.cuisineName", target = "cuisineName")
+
+  RecipeDTO toDTO(Recipe recipe);
+
+  Recipe toEntity(RecipeDTO recipeDTO);
 
   @Mapping(source = "ingredient.ingredientId", target = "ingredientId")
   @Mapping(source = "ingredient.ingredientName", target = "ingredientName")
-  @Mapping(source = "unit.unitName", target = "unitName")
   @Mapping(source = "unit.unitId", target = "unitId")
+  @Mapping(source = "unit.unitName", target = "unitName")
   @Mapping(source = "unit.abbreviation", target = "abbreviation")
-  IngredientDTO toIngredientDTO(RecipeIngredient recipeIngredient);
+  @Mapping(source = "recipeIngredientId", target = "recipeIngredientId")
+  IngredientDTO map(RecipeIngredient recipeIngredient);
 
-  InstructionStepDTO toInstructionStepDTO(RecipeInstructionStep recipeInstructionStep);
+  InstructionStepDTO map(RecipeInstructionStep recipeInstructionStep);
 
   @Mapping(source = "id.recipeId", target = "recipeId")
   @Mapping(source = "tag.tagId", target = "tagId")
   @Mapping(source = "tag.tagName", target = "tagName")
-  TagDTO toTagDTO(RecipeTag recipeTag);
+  TagDTO map(RecipeTag recipeTag);
+
+  List<InstructionStepDTO> mapInstructionSteps(List<RecipeInstructionStep> steps);
+
+  List<TagDTO> mapRecipeTags(List<RecipeTag> tags);
 
 }
