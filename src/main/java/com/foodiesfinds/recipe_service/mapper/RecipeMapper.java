@@ -24,8 +24,6 @@ public interface RecipeMapper {
   @Mapping(target = "steps", source = "steps")
   @Mapping(target = "tags", source = "tags")
   @Mapping(source = "cuisine.cuisineId", target = "cuisineId")
-  @Mapping(source = "cuisine.cuisineName", target = "cuisineName")
-
   RecipeDTO toDTO(Recipe recipe);
 
   Recipe toEntity(RecipeDTO recipeDTO);
