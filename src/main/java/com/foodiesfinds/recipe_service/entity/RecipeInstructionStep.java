@@ -33,15 +33,6 @@ public class RecipeInstructionStep {
   private Long stepId;
 
   @NotNull
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(
-      name = "recipe_id",
-      nullable = false,
-      foreignKey = @ForeignKey(name = "fk_instruction_steps_recipe_id")
-  )
-  private Recipe recipe;
-
-  @NotNull
   @Column(name = "step_number", nullable = false)
   private Short stepNumber;
 

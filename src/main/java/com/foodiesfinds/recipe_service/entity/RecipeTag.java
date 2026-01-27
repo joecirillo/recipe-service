@@ -1,9 +1,14 @@
 package com.foodiesfinds.recipe_service.entity;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
@@ -21,34 +26,11 @@ import org.hibernate.annotations.OnDeleteAction;
 @AllArgsConstructor
 public class RecipeTag {
 
-  @EmbeddedId
-  private RecipeTagId id;
-
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @MapsId("recipeId")
-  @JoinColumn(
-      name = "recipe_id",
-      nullable = false,
-      foreignKey = @ForeignKey(name = "fk_recipe_tags_recipe_id")
-  )
-  @OnDelete(action = OnDeleteAction.CASCADE) // mirrors the DB ON DELETE CASCADE for recipes
-  private Recipe recipe;
-
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @MapsId("tagId")
-  @JoinColumn(
-      name = "tag_id",
-      nullable = false,
-      foreignKey = @ForeignKey(name = "fk_recipe_tags_tag_id")
-  )
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "recipe_tag_id")
+  private Long recipeTagId;
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, optional = false)
+  @JoinColumn(name = "tag_id", nullable = false)
   private Tag tag;
-
-  public RecipeTag(Recipe recipe, Tag tag) {
-    this.recipe = recipe;
-    this.tag = tag;
-    this.id = new RecipeTagId(
-        recipe == null ? null : recipe.getId(),
-        tag == null ? null : tag.getTagId()
-    );
-  }
 }

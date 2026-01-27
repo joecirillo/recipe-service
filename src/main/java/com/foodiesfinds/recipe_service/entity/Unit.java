@@ -21,11 +21,11 @@ public class Unit {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "unit_id")
-  private Long unitId;
+  private Long id;
 
   @NotNull
   @Column(name = "unit_name", length = 50, nullable = false, unique = true)
-  private String unitName;
+  private String name;
 
   @Column(name = "abbreviation", length = 10)
   private String abbreviation;

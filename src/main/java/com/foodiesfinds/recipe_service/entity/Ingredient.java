@@ -21,10 +21,10 @@ public class Ingredient {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "ingredient_id")
-  private Long ingredientId;
+  private Long id;
 
   @NotNull
-  @Column(name = "ingredient_name", length = 255, nullable = false, unique = true)
-  private String ingredientName;
+  @Column(name = "ingredient_name", length = 255, updatable = false, nullable = false, unique = true)
+  private String name;
 
 }

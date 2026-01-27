@@ -23,36 +23,26 @@ public class Recipe {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
-  private List<RecipeIngredient> ingredients = new ArrayList<>();
-
-  @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
-  private List<RecipeInstructionStep> steps = new ArrayList<>();
-
-  @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
-  private List<RecipeTag> tags = new ArrayList<>();
-
   @NotNull
   @Column(name = "recipe_name", length = 255, nullable = false)
-  private String recipeName;
+  private String name;
 
   @Column(columnDefinition = "text")
   private String description;
+
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+  @JoinColumn(name = "cuisine_id", nullable = false)
+  private Cuisine cuisine;
 
   @NotNull
   @Column(length = 255)
   private String author;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(
-      name = "cuisine_id",
-      nullable = false,
-      foreignKey = @ForeignKey(name = "fk_recipe_cuisine_id")
-  )
-  private Cuisine cuisine;
-
   @NotNull
   private short calories;
+
+  @NotNull
+  private short servings;
 
   @NotNull
   private short cookingTime;
@@ -60,8 +50,17 @@ public class Recipe {
   @NotNull
   private short preparationTime;
 
-  @NotNull
-  private short servings;
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+  @JoinColumn(name = "recipe_id", nullable = false)
+  private List<RecipeIngredient> ingredients = new ArrayList<>();
+
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+  @JoinColumn(name = "recipe_id", nullable = false)
+  private List<RecipeInstructionStep> steps = new ArrayList<>();
+
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+  @JoinColumn(name = "recipe_id", nullable = false)
+  private List<RecipeTag> tags = new ArrayList<>();
 
   @Column(name = "image_url", length = 255)
   private String imageUrl;
