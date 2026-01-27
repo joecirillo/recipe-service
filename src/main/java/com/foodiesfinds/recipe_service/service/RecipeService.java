@@ -8,7 +8,7 @@ import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 
 public interface RecipeService {
 
-  RecipeDTO save(RecipeDTO recipe);
+  RecipeDTO save(RecipeDTO recipeDTO);
 
   Collection<RecipeDTO> list(int limit);
 
