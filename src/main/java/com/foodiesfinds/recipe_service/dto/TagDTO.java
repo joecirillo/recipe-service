@@ -6,7 +6,6 @@ import lombok.Data;
 @Data
 public class TagDTO {
 
-  Long recipeId;
   Long tagId;
   String tagName;
 
