@@ -9,7 +9,6 @@ import com.foodiesfinds.recipe_service.repository.IngredientRepository;
 import com.foodiesfinds.recipe_service.repository.RecipeRepository;
 import com.foodiesfinds.recipe_service.repository.TagRepository;
 import com.foodiesfinds.recipe_service.service.RecipeService;
-import com.foodiesfinds.recipe_service.service.TagService;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,9 +34,6 @@ public class RecipeServiceImpl implements RecipeService {
 
   @Autowired
   private final IngredientServiceImpl ingredientService;
-
-  @Autowired
-  private final TagService tagService;
 
   @Autowired
   private final RecipeMapper recipeMapper;
