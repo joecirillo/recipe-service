@@ -1,12 +1,16 @@
 package com.foodiesfinds.recipe_service.common.exception;
 
-public class DataIntegrityViolationException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-  public DataIntegrityViolationException(String message) {
+@ResponseStatus(HttpStatus.CONFLICT)
+public class DuplicateEntityException extends RuntimeException {
+
+  public DuplicateEntityException(String message) {
     super(message);
   }
 
-  public DataIntegrityViolationException() {
+  public DuplicateEntityException() {
     super("Data integrity violation");
   }
 
