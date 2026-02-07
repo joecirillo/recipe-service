@@ -5,6 +5,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 import com.foodiesfinds.recipe_service.dto.RecipeDTO;
+import com.foodiesfinds.recipe_service.dto.RecipeSaveDTO;
 import com.foodiesfinds.recipe_service.entity.Recipe;
 import com.foodiesfinds.recipe_service.dto.Response;
 import com.foodiesfinds.recipe_service.service.implementation.RecipeServiceImpl;
@@ -45,7 +46,7 @@ public class RecipeController {
   }
 
   @PostMapping("/save")
-  public ResponseEntity<RecipeDTO> saveRecipe(@RequestBody @Valid RecipeDTO recipe) {
+  public ResponseEntity<RecipeDTO> saveRecipe(@RequestBody @Valid RecipeSaveDTO recipe) {
 
     RecipeDTO savedRecipe = recipeService.save(recipe);
 

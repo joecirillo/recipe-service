@@ -20,9 +20,9 @@ public class Tag {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "tag_id")
-  Long tagId;
+  Long id;
 
   @Column(name = "tag_name", length = 100, nullable = false, unique = true)
-  String tagName;
+  String name;
 
 }

@@ -8,13 +8,13 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface RecipeTagMapper {
 
-  @Mapping(target = "tag.tagId", source = "tagId")
-  @Mapping(target = "tag.tagName", source = "tagName")
+  @Mapping(target = "tag.id", source = "id")
+  @Mapping(target = "tag.name", source = "name")
   @Mapping(target = "recipeTagId", source = "recipeTagId")
   RecipeTag toEntity(RecipeTagDTO dto);
 
-  @Mapping(target = "tagId", source = "tag.tagId")
-  @Mapping(target = "tagName", source = "tag.tagName")
+  @Mapping(target = "id", source = "tag.id")
+  @Mapping(target = "name", source = "tag.name")
   @Mapping(target = "recipeTagId", source = "recipeTagId")
   RecipeTagDTO toDTO(RecipeTag entity);
 

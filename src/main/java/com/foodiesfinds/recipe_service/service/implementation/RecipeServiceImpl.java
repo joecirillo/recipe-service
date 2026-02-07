@@ -2,12 +2,10 @@ package com.foodiesfinds.recipe_service.service.implementation;
 import com.foodiesfinds.recipe_service.common.exception.DuplicateEntityException;
 import com.foodiesfinds.recipe_service.common.exception.NotFoundException;
 import com.foodiesfinds.recipe_service.dto.RecipeDTO;
-import com.foodiesfinds.recipe_service.dto.RecipeIngredientDTO;
+import com.foodiesfinds.recipe_service.dto.RecipeSaveDTO;
 import com.foodiesfinds.recipe_service.entity.Recipe;
 import com.foodiesfinds.recipe_service.mapper.RecipeMapper;
-import com.foodiesfinds.recipe_service.repository.IngredientRepository;
 import com.foodiesfinds.recipe_service.repository.RecipeRepository;
-import com.foodiesfinds.recipe_service.repository.TagRepository;
 import com.foodiesfinds.recipe_service.service.RecipeService;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
@@ -28,62 +26,47 @@ public class RecipeServiceImpl implements RecipeService {
 
   private final RecipeRepository recipeRepository;
 
-  private final IngredientRepository ingredientRepository;
-
-  private final TagRepository tagRepository;
-
   @Autowired
   private final IngredientServiceImpl ingredientService;
+
+  @Autowired
+  private final CuisineServiceIml cuisineService;
+
+  @Autowired
+  private final TagServiceImpl tagService;
 
   @Autowired
   private final RecipeMapper recipeMapper;
 
   @Transactional
-  public RecipeDTO save(RecipeDTO recipeDTO) {
-    if (recipeDTO.getId() != null) {
-      throw new IllegalArgumentException("Recipe ID must be null for new recipes.");
-    }
+  public RecipeDTO save(RecipeSaveDTO recipeSaveDTO) {
 
     // We don't want multiple tags with the same name
-    long uniqueTagCount = recipeDTO.getTags().stream()
-        .map(tag -> tag.getTagName().toLowerCase().trim())
+    long uniqueTagCount = recipeSaveDTO.getTags().stream()
+        .map(tag -> tag.getName().toLowerCase().trim())
         .distinct()
         .count();
 
-    if (uniqueTagCount < recipeDTO.getTags().size()) {
-      throw new DuplicateEntityException("The same tag cannot be added twice to a single recipe.");
+    if (uniqueTagCount < recipeSaveDTO.getTags().size()) {
+      throw new DuplicateEntityException("The same tag cannot be added more than once"
+          + "to a single recipe.");
     }
 
-    recipeDTO.getTags().stream()
-        .filter(tagDTO -> tagRepository.existsByTagName(tagDTO.getTagName()))
-        .findFirst()
-        .ifPresent(tagDTO -> {
-          throw new DuplicateEntityException("Tag already exists: " + tagDTO.getTagName());
-        });
+    Recipe recipe = recipeMapper.toEntity(recipeSaveDTO);
 
-    // The same ingredient used multiple times in a recipe is allowed since they may be used
-    // in different quantities or forms (e.g., chopped, diced, etc.). However, we do want to check
-    // if the ingredient already exists in the database to avoid duplicates across recipes
-    recipeDTO.getIngredients().stream()
-        .filter(ingredientDTO -> ingredientRepository.existsByName(ingredientDTO.getName()))
-        .findFirst()
-        .ifPresent(ingredientDTO -> {
-          throw new DuplicateEntityException("Ingredient already exists: " + ingredientDTO.getName());
-        });
+    cuisineService.resolveCuisine(recipe.getCuisine());
 
-    // The ingredient ID and name cannot both be provided because this will cause ambiguity
-    // in determining which ingredient to associate with the recipe. The Ingredient entity is
-    // currently set to prohibit name updates, but this is an extra check to ensure data integrity
-    for (RecipeIngredientDTO ingredientDTO : recipeDTO.getIngredients()) {
-      if (ingredientDTO.getId() != null && ingredientDTO.getName() != null) {
-        throw new IllegalArgumentException(
-            "Ingredient ID and name cannot both be provided for ingredient: "
-                + ingredientDTO.getName());
-      }
-    }
+    // For each tag in the recipe, check if a tag with the same name already exists in the database
+    recipe.getTags().forEach(rt -> rt.setTag(tagService.resolveTag(rt.getTag())));
 
-    log.info("Saving new recipe: {}", recipeDTO.getName());
-    return recipeMapper.toDTO(recipeRepository.save(recipeMapper.toEntity(recipeDTO)));
+    // For each ingredient in the recipe, check if an ingredient with the same name already
+    // exists in the database
+    recipe.getIngredients().forEach(ri ->
+        ri.setIngredient(ingredientService.resolveIngredient(ri.getIngredient()))
+    );
+
+    log.info("Saving new recipe: {}", recipeSaveDTO.getName());
+    return recipeMapper.toDTO(recipeRepository.save(recipe));
   }
 
   @Override
@@ -95,7 +78,7 @@ public class RecipeServiceImpl implements RecipeService {
         .map(recipeMapper::toDTO)
         .toList();
     return recipesDTO.stream().toList();
-  }
+  }≠
 
   @Override
   public RecipeDTO get(Long id) {

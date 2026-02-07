@@ -1,6 +1,7 @@
 package com.foodiesfinds.recipe_service.service;
 
 import com.foodiesfinds.recipe_service.dto.RecipeDTO;
+import com.foodiesfinds.recipe_service.dto.RecipeSaveDTO;
 import com.foodiesfinds.recipe_service.entity.Recipe;
 import java.util.Collection;
 import java.util.List;
@@ -8,7 +9,7 @@ import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 
 public interface RecipeService {
 
-  RecipeDTO save(RecipeDTO recipeDTO);
+  RecipeDTO save(RecipeSaveDTO recipeDTO);
 
   Collection<RecipeDTO> list(int limit);
 

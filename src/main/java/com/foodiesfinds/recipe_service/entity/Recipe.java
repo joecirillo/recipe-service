@@ -50,15 +50,15 @@ public class Recipe {
   @NotNull
   private short preparationTime;
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "recipe_id", nullable = false)
   private List<RecipeIngredient> ingredients = new ArrayList<>();
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "recipe_id", nullable = false)
   private List<RecipeInstructionStep> steps = new ArrayList<>();
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "recipe_id", nullable = false)
   private List<RecipeTag> tags = new ArrayList<>();
 
