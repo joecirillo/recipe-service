@@ -1,8 +1,7 @@
 package com.foodiesfinds.recipe_service.mapper;
 
-import com.foodiesfinds.recipe_service.dto.IngredientDTO;
-import com.foodiesfinds.recipe_service.dto.RecipeIngredientDTO;
-import com.foodiesfinds.recipe_service.dto.RecipeIngredientSaveDTO;
+import com.foodiesfinds.recipe_service.dto.ingredient.RecipeIngredientResponseDTO;
+import com.foodiesfinds.recipe_service.dto.ingredient.RecipeIngredientSaveDTO;
 import com.foodiesfinds.recipe_service.entity.Ingredient;
 import com.foodiesfinds.recipe_service.entity.RecipeIngredient;
 import org.mapstruct.Mapper;
@@ -13,14 +12,14 @@ public interface RecipeIngredientMapper {
 
   @Mapping(target = "ingredient.id", source = "id")
   @Mapping(target = "ingredient.name", source = "name")
-  RecipeIngredient toEntity(RecipeIngredientDTO dto);
+  RecipeIngredient toEntity(RecipeIngredientResponseDTO dto);
 
   @Mapping(target = "id", source = "ingredient.id")
   @Mapping(target = "name", source = "ingredient.name")
   @Mapping(target = "unitId", source = "unit.id")
   @Mapping(target = "unitName", source = "unit.name")
   @Mapping(target = "abbreviation", source = "unit.abbreviation")
-  RecipeIngredientDTO toDTO(RecipeIngredient entity);
+  RecipeIngredientResponseDTO toDTO(RecipeIngredient entity);
 
   @Mapping(target = "unit.id", source = "unitId")
   @Mapping(target = "unit.name", source = "unitName")

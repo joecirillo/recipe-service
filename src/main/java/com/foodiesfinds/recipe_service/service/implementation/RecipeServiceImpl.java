@@ -1,8 +1,8 @@
 package com.foodiesfinds.recipe_service.service.implementation;
 import com.foodiesfinds.recipe_service.common.exception.DuplicateEntityException;
 import com.foodiesfinds.recipe_service.common.exception.NotFoundException;
-import com.foodiesfinds.recipe_service.dto.RecipeDTO;
-import com.foodiesfinds.recipe_service.dto.RecipeSaveDTO;
+import com.foodiesfinds.recipe_service.dto.recipe.RecipeResponseDTO;
+import com.foodiesfinds.recipe_service.dto.recipe.RecipeSaveDTO;
 import com.foodiesfinds.recipe_service.entity.Recipe;
 import com.foodiesfinds.recipe_service.mapper.RecipeMapper;
 import com.foodiesfinds.recipe_service.repository.RecipeRepository;
@@ -36,10 +36,13 @@ public class RecipeServiceImpl implements RecipeService {
   private final TagServiceImpl tagService;
 
   @Autowired
+  private final UnitServiceImpl unitService;
+
+  @Autowired
   private final RecipeMapper recipeMapper;
 
   @Transactional
-  public RecipeDTO save(RecipeSaveDTO recipeSaveDTO) {
+  public RecipeResponseDTO save(RecipeSaveDTO recipeSaveDTO) {
 
     // We don't want multiple tags with the same name
     long uniqueTagCount = recipeSaveDTO.getTags().stream()
@@ -54,26 +57,27 @@ public class RecipeServiceImpl implements RecipeService {
 
     Recipe recipe = recipeMapper.toEntity(recipeSaveDTO);
 
-    cuisineService.resolveCuisine(recipe.getCuisine());
+    // For each cuisine in the recipe, check if a cuisine with the same name already exists
+    recipe.setCuisine(cuisineService.resolveCuisine(recipe.getCuisine()));
 
-    // For each tag in the recipe, check if a tag with the same name already exists in the database
+    // For each tag in the recipe, check if a tag with the same name already exists
     recipe.getTags().forEach(rt -> rt.setTag(tagService.resolveTag(rt.getTag())));
 
-    // For each ingredient in the recipe, check if an ingredient with the same name already
-    // exists in the database
-    recipe.getIngredients().forEach(ri ->
-        ri.setIngredient(ingredientService.resolveIngredient(ri.getIngredient()))
-    );
+    // For each ingredient in the recipe, check if an ingredient with the same name already exists
+    recipe.getIngredients().forEach(ri -> {
+      ri.setIngredient(ingredientService.resolveIngredient(ri.getIngredient()));
+      ri.setUnit(unitService.resolveUnit(ri.getUnit()));
+    });
 
     log.info("Saving new recipe: {}", recipeSaveDTO.getName());
     return recipeMapper.toDTO(recipeRepository.save(recipe));
   }
 
   @Override
-  public Collection<RecipeDTO> list(int limit) {
+  public Collection<RecipeResponseDTO> list(int limit) {
     log.info("Fetching the first {} recipes", limit);
     List<Recipe> recipes = recipeRepository.findAll(PageRequest.of(0, limit)).toList();
-    List<RecipeDTO> recipesDTO = new ArrayList<>();
+    List<RecipeResponseDTO> recipesDTO = new ArrayList<>();
     recipesDTO = recipes.stream()
         .map(recipeMapper::toDTO)
         .toList();
@@ -81,7 +85,7 @@ public class RecipeServiceImpl implements RecipeService {
   }
 
   @Override
-  public RecipeDTO get(Long id) {
+  public RecipeResponseDTO get(Long id) {
     log.info("Fetching recipe by id: {}", id);
     Recipe recipeById = recipeRepository.findById(id)
         .orElseThrow(() -> new NotFoundException());
@@ -89,7 +93,7 @@ public class RecipeServiceImpl implements RecipeService {
   }
 
   @Override
-  public RecipeDTO update(RecipeDTO recipe) {
+  public RecipeResponseDTO update(RecipeResponseDTO recipe) {
     log.info("Updating recipe: {}", recipe.getName());
     return recipeMapper.toDTO(recipeRepository.save(recipeMapper.toEntity(recipe)));
   }
@@ -103,7 +107,7 @@ public class RecipeServiceImpl implements RecipeService {
   }
 
   @Override
-  public List<RecipeDTO> search(String query) {
+  public List<RecipeResponseDTO> search(String query) {
     List<Recipe> recipes = recipeRepository.findByNameContainingIgnoreCase(query);
     return recipes.stream()
         .peek(recipe -> log.info("Mapped recipe to DTO: {}", recipe.getName()))

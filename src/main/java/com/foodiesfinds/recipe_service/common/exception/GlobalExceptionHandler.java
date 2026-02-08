@@ -3,16 +3,18 @@ package com.foodiesfinds.recipe_service.common.exception;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
-import com.foodiesfinds.recipe_service.dto.ErrorResponse;
-import com.foodiesfinds.recipe_service.dto.Response;
+import com.foodiesfinds.recipe_service.dto.core.ErrorResponse;
+import com.foodiesfinds.recipe_service.dto.core.Response;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -30,7 +32,8 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(NotFoundException.class)
   public ResponseEntity<Response> handleNotFoundException(NotFoundException ex) {
-    return buildResponse(NOT_FOUND, "Recipe not found");
+    log.info("NotFoundException: {}", ex.getMessage());
+    return buildResponse(NOT_FOUND, ex.getMessage());
   }
 
   @ExceptionHandler(DuplicateEntityException.class)

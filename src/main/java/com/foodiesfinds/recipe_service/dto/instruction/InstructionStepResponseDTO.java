@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InstructionStepDTO extends BaseInstructionStepDTO {
+public class InstructionStepResponseDTO extends BaseInstructionStepDTO {
   private Long stepId;
 }

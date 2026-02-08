@@ -1,7 +1,7 @@
 package com.foodiesfinds.recipe_service.service.implementation;
 
 import com.foodiesfinds.recipe_service.common.exception.NotFoundException;
-import com.foodiesfinds.recipe_service.dto.IngredientDTO;
+import com.foodiesfinds.recipe_service.dto.ingredient.IngredientResponseDTO;
 import com.foodiesfinds.recipe_service.entity.Ingredient;
 import com.foodiesfinds.recipe_service.mapper.IngredientMapper;
 import com.foodiesfinds.recipe_service.repository.IngredientRepository;
@@ -22,7 +22,7 @@ public class IngredientServiceImpl implements IngredientService {
   private final IngredientRepository ingredientRepository;
 
   @Override
-  public IngredientDTO getIngredientById(Long ingredientId) {
+  public IngredientResponseDTO getIngredientById(Long ingredientId) {
     return ingredientMapper.toDTO(ingredientRepository.findById(ingredientId).get());
   }
 

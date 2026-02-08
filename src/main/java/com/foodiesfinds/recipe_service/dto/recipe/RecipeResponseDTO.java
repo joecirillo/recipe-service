@@ -1,8 +1,8 @@
 package com.foodiesfinds.recipe_service.dto.recipe;
 
-import com.foodiesfinds.recipe_service.dto.instruction.InstructionStepDTO;
-import com.foodiesfinds.recipe_service.dto.instruction.RecipeIngredientDTO;
-import com.foodiesfinds.recipe_service.dto.tag.RecipeTagDTO;
+import com.foodiesfinds.recipe_service.dto.instruction.InstructionStepResponseDTO;
+import com.foodiesfinds.recipe_service.dto.ingredient.RecipeIngredientResponseDTO;
+import com.foodiesfinds.recipe_service.dto.tag.RecipeTagResponseDTO;
 import com.foodiesfinds.recipe_service.dto.base.BaseRecipeDTO;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RecipeResponseDTO extends BaseRecipeDTO<
-    RecipeIngredientDTO,
-    RecipeTagDTO,
-    InstructionStepDTO
+    RecipeIngredientResponseDTO,
+    RecipeTagResponseDTO,
+    InstructionStepResponseDTO
     > {
   private Long id;
   private String imageUrl;

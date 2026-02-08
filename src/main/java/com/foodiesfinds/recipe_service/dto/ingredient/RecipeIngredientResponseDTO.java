@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecipeIngredientDTO extends BaseRecipeIngredientDTO {
+public class RecipeIngredientResponseDTO extends BaseRecipeIngredientDTO {
   private Long recipeIngredientId;
 }

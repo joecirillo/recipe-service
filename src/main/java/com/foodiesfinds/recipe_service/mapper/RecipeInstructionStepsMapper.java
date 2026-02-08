@@ -1,6 +1,6 @@
 package com.foodiesfinds.recipe_service.mapper;
 
-import com.foodiesfinds.recipe_service.dto.InstructionStepDTO;
+import com.foodiesfinds.recipe_service.dto.instruction.InstructionStepResponseDTO;
 import com.foodiesfinds.recipe_service.entity.RecipeInstructionStep;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -11,5 +11,5 @@ public interface RecipeInstructionStepsMapper {
   @Mapping(target = "description", source = "description")
   RecipeInstructionStep toEntity(String description);
 
-  InstructionStepDTO toDTO(RecipeInstructionStep entity);
+  InstructionStepResponseDTO toDTO(RecipeInstructionStep entity);
 }

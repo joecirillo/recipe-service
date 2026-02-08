@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RecipeTagDTO extends BaseRecipeTagDTO {
+public class RecipeTagResponseDTO extends BaseRecipeTagDTO {
   private Long recipeTagId;
 }

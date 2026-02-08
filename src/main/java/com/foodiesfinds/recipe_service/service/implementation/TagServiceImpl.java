@@ -5,12 +5,14 @@ import com.foodiesfinds.recipe_service.common.exception.NotFoundException;
 import com.foodiesfinds.recipe_service.entity.Tag;
 import com.foodiesfinds.recipe_service.repository.TagRepository;
 import com.foodiesfinds.recipe_service.service.TagService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 @Slf4j
 public class TagServiceImpl implements TagService {
 
@@ -30,7 +32,7 @@ public class TagServiceImpl implements TagService {
   }
 
   private boolean isTagValid(Tag tag) {
-    return tag != null && tag.getName() != null && !tag.getName().isEmpty();
+    return tag != null && (tag.getName() != null || !tag.getName().isEmpty());
   }
 
   private Tag createNewTag(Tag tag) {

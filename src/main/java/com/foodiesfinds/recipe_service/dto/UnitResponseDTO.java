@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UnitDTO {
+public class UnitResponseDTO {
 
   @NotNull(message = "Unit ID is required")
   private Long id;

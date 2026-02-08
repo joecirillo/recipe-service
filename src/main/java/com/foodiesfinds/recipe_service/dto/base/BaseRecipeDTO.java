@@ -1,5 +1,7 @@
-package com.foodiesfinds.recipe_service.dto;
+package com.foodiesfinds.recipe_service.dto.base;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.foodiesfinds.recipe_service.dto.CuisineResponseDTO;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -14,10 +16,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonPropertyOrder({ "id" })
 public abstract class BaseRecipeDTO<
-    I extends RecipeIngredientSaveDTO,
-    T extends RecipeTagSaveDTO,
-    S extends InstructionStepSaveDTO
+    I extends BaseRecipeIngredientDTO,
+    T extends BaseRecipeTagDTO,
+    S extends BaseInstructionStepDTO
     > {
   @NotEmpty(message = "Recipe must have a name.")
   @NotNull(message = "Recipe name is required.")
@@ -35,7 +38,7 @@ public abstract class BaseRecipeDTO<
 
   @Min(value = 1, message = "Preparation time must be at least 1 minute.")
   private short preparationTime;
-  private CuisineDTO cuisine;
+  private CuisineResponseDTO cuisine;
   private List<T> tags = new ArrayList<>();
   private String author;
 
