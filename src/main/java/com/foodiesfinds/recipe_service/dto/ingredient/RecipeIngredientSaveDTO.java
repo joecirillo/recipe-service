@@ -1,5 +1,7 @@
 package com.foodiesfinds.recipe_service.dto;
 
+import com.foodiesfinds.recipe_service.dto.base.BaseRecipeIngredientDTO;
+import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +10,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecipeIngredientDTO extends RecipeIngredientSaveDTO {
-  private Long recipeIngredientId;
+public class RecipeIngredientSaveDTO extends BaseRecipeIngredientDTO {
+
 }

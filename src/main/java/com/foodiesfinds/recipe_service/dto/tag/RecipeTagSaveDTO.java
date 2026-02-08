@@ -1,6 +1,6 @@
 package com.foodiesfinds.recipe_service.dto;
 
-import com.foodiesfinds.recipe_service.entity.RecipeTag;
+import com.foodiesfinds.recipe_service.dto.base.BaseRecipeTagDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RecipeTagDTO extends RecipeTagSaveDTO {
-  private Long recipeTagId;
+public class RecipeTagSaveDTO extends BaseRecipeTagDTO {
+
 }

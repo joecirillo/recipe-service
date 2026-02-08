@@ -78,7 +78,7 @@ public class RecipeServiceImpl implements RecipeService {
         .map(recipeMapper::toDTO)
         .toList();
     return recipesDTO.stream().toList();
-  }≠
+  }
 
   @Override
   public RecipeDTO get(Long id) {
