@@ -1,23 +1,23 @@
 package com.foodiesfinds.recipe_service.service;
 
-import com.foodiesfinds.recipe_service.dto.RecipeDTO;
-import com.foodiesfinds.recipe_service.entity.Recipe;
+import com.foodiesfinds.recipe_service.dto.recipe.RecipeResponseDTO;
+import com.foodiesfinds.recipe_service.dto.recipe.RecipeSaveDTO;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 
 public interface RecipeService {
 
-  RecipeDTO save(RecipeDTO recipe);
+  RecipeResponseDTO save(RecipeSaveDTO recipeDTO);
 
-  Collection<RecipeDTO> list(int limit);
+  Collection<RecipeResponseDTO> list(int limit);
 
-  RecipeDTO get(Long id);
+  RecipeResponseDTO get(Long id);
 
-  RecipeDTO update(RecipeDTO recipe);
+  RecipeResponseDTO update(RecipeResponseDTO recipe);
 
   void delete(Long id) throws NotFoundException;
 
-  List<RecipeDTO> search(String query);
+  List<RecipeResponseDTO> search(String query);
 
 }

@@ -1,5 +1,6 @@
 package com.foodiesfinds.recipe_service.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,6 +14,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,29 +35,12 @@ public class RecipeIngredient {
   @Column(name = "recipe_ingredient_id")
   private Long recipeIngredientId;
 
-  @NotNull
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(
-      name = "recipe_id",
-      nullable = false,
-      foreignKey = @ForeignKey(name = "fk_recipe_ingredients_recipe_id")
-  )
-  private Recipe recipe;
-
-  @NotNull
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(
-      name = "ingredient_id",
-      nullable = false,
-      foreignKey = @ForeignKey(name = "fk_recipe_ingredients_ingredient_id")
-  )
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+  @JoinColumn(name = "ingredient_id", nullable = false)
   private Ingredient ingredient;
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = true)
-  @JoinColumn(
-      name = "unit_id",
-      foreignKey = @ForeignKey(name = "fk_recipe_ingredients_unit_id")
-  )
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "unit_id", nullable = false)
   private Unit unit;
 
   @NotNull

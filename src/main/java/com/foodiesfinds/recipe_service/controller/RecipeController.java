@@ -1,15 +1,13 @@
 package com.foodiesfinds.recipe_service.controller;
 
 import static java.time.LocalDateTime.now;
-import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
-import com.foodiesfinds.recipe_service.dto.RecipeDTO;
-import com.foodiesfinds.recipe_service.entity.Recipe;
-import com.foodiesfinds.recipe_service.dto.Response;
+import com.foodiesfinds.recipe_service.dto.recipe.RecipeResponseDTO;
+import com.foodiesfinds.recipe_service.dto.recipe.RecipeSaveDTO;
+import com.foodiesfinds.recipe_service.dto.core.Response;
 import com.foodiesfinds.recipe_service.service.implementation.RecipeServiceImpl;
 import jakarta.validation.Valid;
-import java.net.URI;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -45,9 +43,9 @@ public class RecipeController {
   }
 
   @PostMapping("/save")
-  public ResponseEntity<RecipeDTO> saveRecipe(@RequestBody @Valid RecipeDTO recipe) {
+  public ResponseEntity<RecipeResponseDTO> saveRecipe(@RequestBody @Valid RecipeSaveDTO recipe) {
 
-    RecipeDTO savedRecipe = recipeService.save(recipe);
+    RecipeResponseDTO savedRecipe = recipeService.save(recipe);
 
     java.net.URI location = ServletUriComponentsBuilder
         .fromCurrentRequestUri()
@@ -74,7 +72,7 @@ public class RecipeController {
   }
 
   @PutMapping("/update")
-  public ResponseEntity<Response> updateRecipe(@RequestBody @Valid RecipeDTO recipe) {
+  public ResponseEntity<Response> updateRecipe(@RequestBody @Valid RecipeResponseDTO recipe) {
     recipeService.update(recipe);
     return ResponseEntity.ok(
         Response.builder()

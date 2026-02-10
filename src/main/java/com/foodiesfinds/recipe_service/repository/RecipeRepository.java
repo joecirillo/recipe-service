@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
-  List<Recipe> findByRecipeNameContainingIgnoreCase(String query);
+  List<Recipe> findByNameContainingIgnoreCase(String query);
 }

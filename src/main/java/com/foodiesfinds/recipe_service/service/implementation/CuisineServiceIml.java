@@ -1,0 +1,44 @@
+package com.foodiesfinds.recipe_service.service.implementation;
+
+import com.foodiesfinds.recipe_service.common.exception.BadRequestException;
+import com.foodiesfinds.recipe_service.common.exception.NotFoundException;
+import com.foodiesfinds.recipe_service.entity.Cuisine;
+import com.foodiesfinds.recipe_service.repository.CuisineRepository;
+import com.foodiesfinds.recipe_service.service.CuisineService;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+@Slf4j
+public class CuisineServiceIml implements CuisineService {
+
+  private final CuisineRepository cuisineRepository;
+
+  @Override
+  public Cuisine resolveCuisine(Cuisine requestedCuisine) {
+    if (!isCuisineValid(requestedCuisine)) {
+      throw new BadRequestException("Cuisine request must have either an ID or a name.");
+    }
+    if (requestedCuisine.getId() != null) {
+      return cuisineRepository.findById(Long.valueOf(requestedCuisine.getId()))
+          .orElseThrow(() -> new NotFoundException("Cuisine ID not found: "
+              + requestedCuisine.getId()));
+    }
+    return cuisineRepository.findByNameIgnoreCase(requestedCuisine.getName())
+        .orElseGet(() -> createNewCuisine(requestedCuisine));
+  }
+
+  private boolean isCuisineValid(Cuisine req) {
+    return req.getId() != null || (req.getName() != null && !req.getName().isBlank());
+  }
+
+  private Cuisine createNewCuisine(Cuisine cuisine) {
+    Cuisine newCuisine = new Cuisine();
+    newCuisine.setName(cuisine.getName());
+    return cuisineRepository.save(newCuisine);
+  }
+}
