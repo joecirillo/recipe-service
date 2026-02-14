@@ -1,7 +1,7 @@
 package com.foodiesfinds.recipe_service.service.implementation;
 
-import com.foodiesfinds.recipe_service.common.exception.BadRequestException;
-import com.foodiesfinds.recipe_service.common.exception.NotFoundException;
+import com.foodiesfinds.recipe_service.core.exception.BadRequestException;
+import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
 import com.foodiesfinds.recipe_service.entity.Tag;
 import com.foodiesfinds.recipe_service.repository.TagRepository;
 import com.foodiesfinds.recipe_service.service.TagService;

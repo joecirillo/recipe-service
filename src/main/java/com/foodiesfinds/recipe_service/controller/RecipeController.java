@@ -3,6 +3,7 @@ package com.foodiesfinds.recipe_service.controller;
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.OK;
 
+import com.foodiesfinds.recipe_service.core.response.ResponseFactory;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeResponseDTO;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeSaveDTO;
 import com.foodiesfinds.recipe_service.dto.core.Response;
@@ -30,16 +31,12 @@ public class RecipeController {
 
   private final RecipeServiceImpl recipeService;
 
+  private final ResponseFactory response;
+
   @GetMapping("/list")
   public ResponseEntity<Response> getRecipes() {
-    return ResponseEntity.ok(
-        Response.builder()
-            .timeStamp(now())
-            .data(Map.of("recipes", recipeService.list(30)))
-            .message("Recipes retrieved")
-            .status(OK)
-            .statusCode(OK.value())
-            .build());
+    return response.buildResponse(OK, "Recipes retrieved",
+        recipeService.list(30));
   }
 
   @PostMapping("/save")
@@ -60,31 +57,15 @@ public class RecipeController {
 
   @GetMapping("/get/{id}")
   public ResponseEntity<Response> getRecipe(@PathVariable("id") Long id) {
-    return ResponseEntity.ok(
-        Response.builder()
-            .timeStamp(now())
-            .data(Map.of("recipe", recipeService.get(id)))
-            .message("Recipe retrieved")
-            .status(OK)
-            .statusCode(OK.value())
-            .build()
-    );
+    return response.buildResponse(OK, "Recipe retrieved",
+        recipeService.get(id));
   }
 
   @PutMapping("/update")
   public ResponseEntity<Response> updateRecipe(@RequestBody @Valid RecipeResponseDTO recipe) {
-    recipeService.update(recipe);
-    return ResponseEntity.ok(
-        Response.builder()
-            .timeStamp(now())
-            .data(Map.of("recipe", recipeService.update(recipe)))
-            .message("Recipe updated")
-            .status(OK)
-            .statusCode(OK.value())
-            .build()
-    );
+    return response.buildResponse(OK, "Recipe updated",
+        recipeService.update(recipe));
   }
-
 
   @DeleteMapping("/delete/{id}")
   public ResponseEntity<Void> deleteRecipe(@PathVariable("id") Long id) {
@@ -94,15 +75,8 @@ public class RecipeController {
 
   @GetMapping("/search")
   public ResponseEntity<Response> searchRecipe(@RequestParam("query") String query) {
-    return ResponseEntity.ok(
-        Response.builder()
-            .timeStamp(now())
-            .data(Map.of("queried", recipeService.search(query)))
-            .message("Recipe queried")
-            .status(OK)
-            .statusCode(OK.value())
-            .build()
-    );
+    return response.buildResponse(OK, "Recipe queried",
+        recipeService.search(query));
   }
 
 }
