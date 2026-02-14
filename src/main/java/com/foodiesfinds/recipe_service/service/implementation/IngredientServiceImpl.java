@@ -1,6 +1,6 @@
 package com.foodiesfinds.recipe_service.service.implementation;
 
-import com.foodiesfinds.recipe_service.common.exception.NotFoundException;
+import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
 import com.foodiesfinds.recipe_service.dto.ingredient.IngredientResponseDTO;
 import com.foodiesfinds.recipe_service.entity.Ingredient;
 import com.foodiesfinds.recipe_service.mapper.IngredientMapper;
@@ -8,7 +8,7 @@ import com.foodiesfinds.recipe_service.repository.IngredientRepository;
 import com.foodiesfinds.recipe_service.service.IngredientService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import com.foodiesfinds.recipe_service.common.exception.BadRequestException;
+import com.foodiesfinds.recipe_service.core.exception.BadRequestException;
 import org.springframework.stereotype.Service;
 
 

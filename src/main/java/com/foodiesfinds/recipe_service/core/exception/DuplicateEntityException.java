@@ -1,4 +1,4 @@
-package com.foodiesfinds.recipe_service.common.exception;
+package com.foodiesfinds.recipe_service.core.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

@@ -1,6 +1,6 @@
 package com.foodiesfinds.recipe_service.service.implementation;
-import com.foodiesfinds.recipe_service.common.exception.DuplicateEntityException;
-import com.foodiesfinds.recipe_service.common.exception.NotFoundException;
+import com.foodiesfinds.recipe_service.core.exception.DuplicateEntityException;
+import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeResponseDTO;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeSaveDTO;
 import com.foodiesfinds.recipe_service.entity.Recipe;

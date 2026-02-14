@@ -1,4 +1,4 @@
-package com.foodiesfinds.recipe_service.common.exception;
+package com.foodiesfinds.recipe_service.core.exception;
 
 public class NotFoundException extends RuntimeException {
 

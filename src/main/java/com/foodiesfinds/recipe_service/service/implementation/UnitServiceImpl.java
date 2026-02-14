@@ -1,7 +1,6 @@
 package com.foodiesfinds.recipe_service.service.implementation;
 
-import com.foodiesfinds.recipe_service.common.exception.NotFoundException;
-import com.foodiesfinds.recipe_service.entity.Cuisine;
+import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
 import com.foodiesfinds.recipe_service.entity.Unit;
 import com.foodiesfinds.recipe_service.repository.UnitRepository;
 import com.foodiesfinds.recipe_service.service.UnitService;
