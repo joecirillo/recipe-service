@@ -13,8 +13,6 @@ public abstract class BaseRecipeIngredientDTO {
   private Long id;
   private String name;
   private Long unitId;
-  private String unitName;
-  private String abbreviation;
   private BigDecimal quantity;
   private String notes;
 

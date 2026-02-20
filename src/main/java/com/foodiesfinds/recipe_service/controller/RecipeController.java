@@ -7,6 +7,7 @@ import com.foodiesfinds.recipe_service.core.response.ResponseFactory;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeResponseDTO;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeSaveDTO;
 import com.foodiesfinds.recipe_service.dto.core.Response;
+import com.foodiesfinds.recipe_service.dto.recipe.RecipeUpdateDTO;
 import com.foodiesfinds.recipe_service.service.implementation.RecipeServiceImpl;
 import jakarta.validation.Valid;
 import java.util.Map;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -61,10 +63,11 @@ public class RecipeController {
         recipeService.get(id));
   }
 
-  @PutMapping("/update")
-  public ResponseEntity<Response> updateRecipe(@RequestBody @Valid RecipeResponseDTO recipe) {
+  @PatchMapping("/update")
+  public ResponseEntity<Response> updateRecipe(@RequestBody @Valid RecipeUpdateDTO recipe,
+      @PathVariable("id") Long id) {
     return response.buildResponse(OK, "Recipe updated",
-        recipeService.update(recipe));
+        recipeService.update(recipe, id));
   }
 
   @DeleteMapping("/delete/{id}")

@@ -1,8 +1,10 @@
 package com.foodiesfinds.recipe_service.service.implementation;
+
 import com.foodiesfinds.recipe_service.core.exception.DuplicateEntityException;
 import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeResponseDTO;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeSaveDTO;
+import com.foodiesfinds.recipe_service.dto.recipe.RecipeUpdateDTO;
 import com.foodiesfinds.recipe_service.entity.Recipe;
 import com.foodiesfinds.recipe_service.mapper.RecipeMapper;
 import com.foodiesfinds.recipe_service.repository.RecipeRepository;
@@ -93,9 +95,25 @@ public class RecipeServiceImpl implements RecipeService {
   }
 
   @Override
-  public RecipeResponseDTO update(RecipeResponseDTO recipe) {
-    log.info("Updating recipe: {}", recipe.getName());
-    return recipeMapper.toDTO(recipeRepository.save(recipeMapper.toEntity(recipe)));
+  @Transactional
+  public RecipeResponseDTO update(RecipeUpdateDTO dto, Long id) {
+    Recipe currentRecipe = recipeRepository.findById(dto.getId())
+        .orElseThrow(() -> new NotFoundException());
+
+    currentRecipe.getIngredients().clear();
+    currentRecipe.getSteps().clear();
+    recipeRepository.saveAndFlush(currentRecipe);
+
+    Recipe updatedRecipe = recipeMapper.toEntity(dto, currentRecipe);
+    log.info("Updated recipe entity: {}", updatedRecipe);
+
+    // For each ingredient in the recipe, check if an ingredient with the same name already exists
+    updatedRecipe.getIngredients().forEach(ri -> {
+      ri.setIngredient(ingredientService.resolveIngredient(ri.getIngredient()));
+      ri.setUnit(unitService.resolveUnit(ri.getUnit()));
+    });
+
+    return recipeMapper.toDTO(recipeRepository.save(updatedRecipe));
   }
 
   @Override

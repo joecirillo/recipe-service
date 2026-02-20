@@ -11,4 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RecipeIngredientResponseDTO extends BaseRecipeIngredientDTO {
   private Long recipeIngredientId;
+  private String unitName;
+  private String abbreviation;
 }

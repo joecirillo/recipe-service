@@ -9,9 +9,11 @@ import com.foodiesfinds.recipe_service.service.IngredientService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import com.foodiesfinds.recipe_service.core.exception.BadRequestException;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-
+@Slf4j
 @RequiredArgsConstructor
 @Service
 @Transactional
@@ -40,10 +42,12 @@ public class IngredientServiceImpl implements IngredientService {
   }
 
   private boolean isIngredientValid(Ingredient req) {
+    log.info("Validating ingredient request: {}", req);
     return req.getId() != null || (req.getName() != null && !req.getName().isBlank());
   }
 
   private Ingredient createNewIngredient(String name) {
+    log.info("Creating new ingredient with name: {}", name);
     Ingredient newIngredient = new Ingredient();
     newIngredient.setName(name);
     return ingredientRepository.save(newIngredient);

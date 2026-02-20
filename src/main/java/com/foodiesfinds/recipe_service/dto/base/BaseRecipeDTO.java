@@ -16,19 +16,20 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonPropertyOrder({ "id" })
+@JsonPropertyOrder({"id"})
 public abstract class BaseRecipeDTO<
     I extends BaseRecipeIngredientDTO,
     T extends BaseRecipeTagDTO,
     S extends BaseInstructionStepDTO
     > {
+
   @NotEmpty(message = "Recipe must have a name.")
   @NotNull(message = "Recipe name is required.")
   @Size(min = 3, max = 150, message = "Name must be between 3 and 150 characters.")
   private String name;
   private String description;
   @Positive(message = "Calories must be a positive value.")
-  private short calories;
+  private Short calories;
 
   @Positive(message = "Servings must be a more than zero.")
   private short servings;
