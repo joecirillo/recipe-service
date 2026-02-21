@@ -21,11 +21,24 @@ public interface RecipeMapper {
 
   Recipe toEntity(RecipeSaveDTO dto);
 
-  @Mapping(target = "ingredients", source = "ingredients")
-  @Mapping(target = "steps", source = "steps")
-  @Mapping(target = "cuisine", source = "cuisine")
+  @Mapping(target = "ingredients", ignore = true)
+  @Mapping(target = "steps", ignore = true)
+  @Mapping(target = "tags", ignore = true)
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "createdAt", ignore = true)
+  @Mapping(target = "updatedAt", ignore = true)
   @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
   Recipe toEntity(RecipeUpdateDTO dto, @MappingTarget Recipe recipe);
+
+  @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+  @Mapping(target = "ingredients", ignore = true)
+  @Mapping(target = "steps", ignore = true)
+  @Mapping(target = "tags", ignore = true)
+  @Mapping(target = "cuisine", ignore = true)
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "createdAt", ignore = true)
+  @Mapping(target = "updatedAt", ignore = true)
+  void updateRecipeFromDTO(RecipeUpdateDTO dto, @MappingTarget Recipe recipe);
 
   RecipeUpdateDTO toUpdateDTO(Recipe entity);
 
