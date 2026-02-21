@@ -2,15 +2,21 @@ package com.foodiesfinds.recipe_service.service.implementation;
 
 import com.foodiesfinds.recipe_service.core.exception.DuplicateEntityException;
 import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
+import com.foodiesfinds.recipe_service.dto.ingredient.RecipeIngredientUpdateDTO;
+import com.foodiesfinds.recipe_service.dto.instruction.InstructionStepUpdateDTO;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeResponseDTO;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeSaveDTO;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeUpdateDTO;
+import com.foodiesfinds.recipe_service.dto.tag.RecipeTagUpdateDTO;
 import com.foodiesfinds.recipe_service.entity.Recipe;
+import com.foodiesfinds.recipe_service.entity.RecipeIngredient;
+import com.foodiesfinds.recipe_service.mapper.RecipeIngredientMapper;
+import com.foodiesfinds.recipe_service.mapper.RecipeInstructionStepsMapper;
 import com.foodiesfinds.recipe_service.mapper.RecipeMapper;
+import com.foodiesfinds.recipe_service.mapper.RecipeTagMapper;
 import com.foodiesfinds.recipe_service.repository.RecipeRepository;
 import com.foodiesfinds.recipe_service.service.RecipeService;
 import jakarta.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +48,15 @@ public class RecipeServiceImpl implements RecipeService {
 
   @Autowired
   private final RecipeMapper recipeMapper;
+
+  @Autowired
+  private final RecipeIngredientMapper recipeIngredientMapper;
+
+  @Autowired
+  private final RecipeTagMapper recipeTagMapper;
+
+  @Autowired
+  private final RecipeInstructionStepsMapper instructionStepMapper;
 
   @Transactional
   public RecipeResponseDTO save(RecipeSaveDTO recipeSaveDTO) {
@@ -79,7 +94,7 @@ public class RecipeServiceImpl implements RecipeService {
   public Collection<RecipeResponseDTO> list(int limit) {
     log.info("Fetching the first {} recipes", limit);
     List<Recipe> recipes = recipeRepository.findAll(PageRequest.of(0, limit)).toList();
-    List<RecipeResponseDTO> recipesDTO = new ArrayList<>();
+    List<RecipeResponseDTO> recipesDTO;
     recipesDTO = recipes.stream()
         .map(recipeMapper::toDTO)
         .toList();
@@ -90,37 +105,72 @@ public class RecipeServiceImpl implements RecipeService {
   public RecipeResponseDTO get(Long id) {
     log.info("Fetching recipe by id: {}", id);
     Recipe recipeById = recipeRepository.findById(id)
-        .orElseThrow(() -> new NotFoundException());
+        .orElseThrow(NotFoundException::new);
     return recipeMapper.toDTO(recipeById);
   }
 
   @Override
   @Transactional
   public RecipeResponseDTO update(RecipeUpdateDTO dto, Long id) {
-    Recipe currentRecipe = recipeRepository.findById(dto.getId())
-        .orElseThrow(() -> new NotFoundException());
+    Recipe recipe = recipeRepository.findById(id)
+        .orElseThrow(() -> new NotFoundException("Recipe not found with id: " + id));
 
-    currentRecipe.getIngredients().clear();
-    currentRecipe.getSteps().clear();
-    recipeRepository.saveAndFlush(currentRecipe);
+    recipeMapper.updateRecipeFromDTO(dto, recipe);
 
-    Recipe updatedRecipe = recipeMapper.toEntity(dto, currentRecipe);
-    log.info("Updated recipe entity: {}", updatedRecipe);
+    if(dto.getCuisine() != null) {
+      recipe.setCuisine(cuisineService.resolveCuisine(recipe.getCuisine()));
+    }
 
-    // For each ingredient in the recipe, check if an ingredient with the same name already exists
-    updatedRecipe.getIngredients().forEach(ri -> {
+    if (dto.getIngredients() != null) {
+      updateIngredients(recipe, dto.getIngredients());
+    }
+    if (dto.getTags() != null) {
+      updateTags(recipe, dto.getTags());
+    }
+    if (dto.getSteps() != null) {
+      updateSteps(recipe, dto.getSteps());
+    }
+
+    return recipeMapper.toDTO(recipe);
+  }
+
+  private void updateIngredients(Recipe recipe, List<RecipeIngredientUpdateDTO> dtos) {
+    recipe.getIngredients().clear();
+    recipeRepository.flush();
+
+    dtos.forEach(dto -> {
+      RecipeIngredient ri = recipeIngredientMapper.toEntity(dto);
+
       ri.setIngredient(ingredientService.resolveIngredient(ri.getIngredient()));
       ri.setUnit(unitService.resolveUnit(ri.getUnit()));
-    });
 
-    return recipeMapper.toDTO(recipeRepository.save(updatedRecipe));
+      recipe.getIngredients().add(ri);
+    });
+  }
+
+  private void updateSteps(Recipe recipe, List<InstructionStepUpdateDTO> dtos) {
+    recipe.getSteps().clear();
+    recipeRepository.flush();
+
+    dtos.stream()
+        .map(instructionStepMapper::toEntity)
+        .forEach(step -> recipe.getSteps().add(step));
+  }
+
+  private void updateTags(Recipe recipe, List<RecipeTagUpdateDTO> dtos) {
+    recipe.getTags().clear();
+    recipeRepository.flush();
+
+    dtos.stream()
+        .map(recipeTagMapper::toEntity)
+        .forEach(tag -> recipe.getTags().add(tag));
   }
 
   @Override
   public void delete(Long id) throws NotFoundException {
     log.info("Deleting recipe by id: {}", id);
     recipeRepository.findById(id)
-        .orElseThrow(() -> new NotFoundException());
+        .orElseThrow(NotFoundException::new);
     recipeRepository.deleteById(id);
   }
 

@@ -63,7 +63,7 @@ public class RecipeController {
         recipeService.get(id));
   }
 
-  @PatchMapping("/update")
+  @PatchMapping("/update/{id}")
   public ResponseEntity<Response> updateRecipe(@RequestBody @Valid RecipeUpdateDTO recipe,
       @PathVariable("id") Long id) {
     return response.buildResponse(OK, "Recipe updated",
