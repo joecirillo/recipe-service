@@ -43,10 +43,8 @@ public abstract class BaseRecipeDTO<
   private List<T> tags = new ArrayList<>();
   private String author;
 
-  @NotNull(message = "Recipe must have at least one ingredient.")
   private List<I> ingredients = new ArrayList<>();
 
-  @NotNull(message = "Recipe must have at least one instruction step.")
   private List<S> steps = new ArrayList<>();
 
   private String imageUrl;
