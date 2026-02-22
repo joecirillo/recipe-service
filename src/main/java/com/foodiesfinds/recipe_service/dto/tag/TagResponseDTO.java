@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class TagResponseDTO {
-  Long tagId;
-  String tagName;
+    Long tagId;
+    String tagName;
 }

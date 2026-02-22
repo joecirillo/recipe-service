@@ -2,10 +2,11 @@ package com.foodiesfinds.recipe_service.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 /**
  * Composite key class for RecipeTag entity.
@@ -16,12 +17,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RecipeTagId implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  @Column(name = "recipe_id")
-  private Long recipeId;
+    @Column(name = "recipe_id")
+    private Long recipeId;
 
-  @Column(name = "tag_id")
-  private Long tagId;
+    @Column(name = "tag_id")
+    private Long tagId;
 
 }

@@ -4,6 +4,6 @@ import com.foodiesfinds.recipe_service.entity.Cuisine;
 
 public interface CuisineService {
 
-  Cuisine resolveCuisine(Cuisine requestedCuisine);
+    Cuisine resolveCuisine(Cuisine requestedCuisine);
 
 }

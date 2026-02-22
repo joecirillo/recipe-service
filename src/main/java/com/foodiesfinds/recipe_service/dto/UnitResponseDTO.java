@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UnitResponseDTO {
 
-  @NotNull(message = "Unit ID is required")
-  private Long id;
-  private String name;
-  private String abbreviation;
+    @NotNull(message = "Unit ID is required")
+    private Long id;
+    private String name;
+    private String abbreviation;
 
 }

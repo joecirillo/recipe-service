@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class BaseRecipeTagDTO {
-  private Long id;
-  String name;
+    String name;
+    private Long id;
 
 }

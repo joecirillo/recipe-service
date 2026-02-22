@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RecipeTagResponseDTO extends BaseRecipeTagDTO {
-  private Long recipeTagId;
+    private Long recipeTagId;
 }

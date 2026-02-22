@@ -7,8 +7,8 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface UnitMapper {
 
-  Unit toEntity(UnitResponseDTO unitDTO);
+    Unit toEntity(UnitResponseDTO unitDTO);
 
-  UnitResponseDTO toDTO(Unit unit);
+    UnitResponseDTO toDTO(Unit unit);
 
 }

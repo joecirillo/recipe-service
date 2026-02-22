@@ -8,8 +8,8 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface IngredientMapper {
 
-  Ingredient toEntity(IngredientResponseDTO ingredientDTO);
+    Ingredient toEntity(IngredientResponseDTO ingredientDTO);
 
-  IngredientResponseDTO toDTO(Ingredient ingredient);
+    IngredientResponseDTO toDTO(Ingredient ingredient);
 
 }

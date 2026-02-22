@@ -16,29 +16,29 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CuisineServiceIml implements CuisineService {
 
-  private final CuisineRepository cuisineRepository;
+    private final CuisineRepository cuisineRepository;
 
-  @Override
-  public Cuisine resolveCuisine(Cuisine requestedCuisine) {
-    if (!isCuisineValid(requestedCuisine)) {
-      throw new BadRequestException("Cuisine request must have either an ID or a name.");
+    @Override
+    public Cuisine resolveCuisine(Cuisine requestedCuisine) {
+        if (!isCuisineValid(requestedCuisine)) {
+            throw new BadRequestException("Cuisine request must have either an ID or a name.");
+        }
+        if (requestedCuisine.getId() != null) {
+            return cuisineRepository.findById(Long.valueOf(requestedCuisine.getId()))
+                    .orElseThrow(() -> new NotFoundException("Cuisine ID not found: "
+                            + requestedCuisine.getId()));
+        }
+        return cuisineRepository.findByNameIgnoreCase(requestedCuisine.getName())
+                .orElseGet(() -> createNewCuisine(requestedCuisine));
     }
-    if (requestedCuisine.getId() != null) {
-      return cuisineRepository.findById(Long.valueOf(requestedCuisine.getId()))
-          .orElseThrow(() -> new NotFoundException("Cuisine ID not found: "
-              + requestedCuisine.getId()));
+
+    private boolean isCuisineValid(Cuisine req) {
+        return req.getId() != null || (req.getName() != null && !req.getName().isBlank());
     }
-    return cuisineRepository.findByNameIgnoreCase(requestedCuisine.getName())
-        .orElseGet(() -> createNewCuisine(requestedCuisine));
-  }
 
-  private boolean isCuisineValid(Cuisine req) {
-    return req.getId() != null || (req.getName() != null && !req.getName().isBlank());
-  }
-
-  private Cuisine createNewCuisine(Cuisine cuisine) {
-    Cuisine newCuisine = new Cuisine();
-    newCuisine.setName(cuisine.getName());
-    return cuisineRepository.save(newCuisine);
-  }
+    private Cuisine createNewCuisine(Cuisine cuisine) {
+        Cuisine newCuisine = new Cuisine();
+        newCuisine.setName(cuisine.getName());
+        return cuisineRepository.save(newCuisine);
+    }
 }

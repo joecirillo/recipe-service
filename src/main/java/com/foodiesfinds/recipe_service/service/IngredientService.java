@@ -5,8 +5,8 @@ import com.foodiesfinds.recipe_service.entity.Ingredient;
 
 public interface IngredientService {
 
-  IngredientResponseDTO getIngredientById(Long ingredientId);
+    IngredientResponseDTO getIngredientById(Long ingredientId);
 
-  Ingredient resolveIngredient(Ingredient ingredientDTO);
+    Ingredient resolveIngredient(Ingredient ingredientDTO);
 
 }

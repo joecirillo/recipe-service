@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class IngredientResponseDTO {
-
-  private Long id;
-  private String name;
+    private Long id;
+    private String name;
 
 }
