@@ -7,8 +7,8 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface CuisineMapper {
 
-  Cuisine toEntity(CuisineResponseDTO name);
+    Cuisine toEntity(CuisineResponseDTO name);
 
-  String toDTO(Cuisine entity);
+    String toDTO(Cuisine entity);
 
 }

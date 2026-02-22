@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RecipeIngredientResponseDTO extends BaseRecipeIngredientDTO {
-  private String unitName;
-  private String abbreviation;
+    private String unitName;
+    private String abbreviation;
 }

@@ -9,13 +9,13 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface RecipeInstructionStepsMapper {
 
-  @Mapping(target = "description", source = "description")
-  RecipeInstructionStep toEntity(String description);
+    @Mapping(target = "description", source = "description")
+    RecipeInstructionStep toEntity(String description);
 
-  InstructionStepResponseDTO toDTO(RecipeInstructionStep entity);
+    InstructionStepResponseDTO toDTO(RecipeInstructionStep entity);
 
-  RecipeInstructionStep toEntity(InstructionStepUpdateDTO dto);
+    RecipeInstructionStep toEntity(InstructionStepUpdateDTO dto);
 
-  InstructionStepUpdateDTO toUpdateDTO(RecipeInstructionStep entity);
+    InstructionStepUpdateDTO toUpdateDTO(RecipeInstructionStep entity);
 
 }

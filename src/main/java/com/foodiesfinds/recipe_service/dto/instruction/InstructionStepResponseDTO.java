@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class InstructionStepResponseDTO extends BaseInstructionStepDTO {
-  private Long stepId;
+    private Long stepId;
 }

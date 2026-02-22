@@ -4,5 +4,5 @@ import com.foodiesfinds.recipe_service.entity.Tag;
 
 public interface TagService {
 
-  Tag resolveTag(Tag requestedTag);
+    Tag resolveTag(Tag requestedTag);
 }

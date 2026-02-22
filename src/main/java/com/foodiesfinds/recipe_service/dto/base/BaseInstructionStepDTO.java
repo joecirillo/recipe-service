@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class BaseInstructionStepDTO {
-  private Short stepNumber;
-  private String description;
-  private String tip;
+    private Short stepNumber;
+    private String description;
+    private String tip;
 }

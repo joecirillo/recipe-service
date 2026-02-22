@@ -13,13 +13,13 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class UnitServiceImpl implements UnitService {
 
-  private final UnitRepository unitRepository;
+    private final UnitRepository unitRepository;
 
-  @Override
-  public Unit resolveUnit(Unit unit) {
-    return unitRepository.findById(Long.valueOf(unit.getId()))
-        .orElseThrow(() -> new NotFoundException("Unit ID not found: "
-            + unit.getId()));
-  }
+    @Override
+    public Unit resolveUnit(Unit unit) {
+        return unitRepository.findById(Long.valueOf(unit.getId()))
+                .orElseThrow(() -> new NotFoundException("Unit ID not found: "
+                        + unit.getId()));
+    }
 
 }

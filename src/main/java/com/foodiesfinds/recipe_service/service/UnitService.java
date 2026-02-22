@@ -4,6 +4,6 @@ import com.foodiesfinds.recipe_service.entity.Unit;
 
 public interface UnitService {
 
-  Unit resolveUnit(Unit unit);
+    Unit resolveUnit(Unit unit);
 
 }

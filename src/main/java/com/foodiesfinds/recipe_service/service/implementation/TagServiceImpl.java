@@ -16,28 +16,28 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class TagServiceImpl implements TagService {
 
-  private final TagRepository tagRepository;
+    private final TagRepository tagRepository;
 
-  @Override
-  public Tag resolveTag(Tag requestedTag) {
-    if (!isTagValid(requestedTag)) {
-      throw new BadRequestException("Tag request must have either an ID or a name.");
+    @Override
+    public Tag resolveTag(Tag requestedTag) {
+        if (!isTagValid(requestedTag)) {
+            throw new BadRequestException("Tag request must have either an ID or a name.");
+        }
+        if (requestedTag.getId() != null) {
+            return tagRepository.findById(requestedTag.getId())
+                    .orElseThrow(() -> new NotFoundException("Tag ID not found: " + requestedTag.getId()));
+        }
+        return tagRepository.findByNameIgnoreCase(requestedTag.getName())
+                .orElseGet(() -> createNewTag(requestedTag));
     }
-    if (requestedTag.getId() != null) {
-      return tagRepository.findById(requestedTag.getId())
-          .orElseThrow(() -> new NotFoundException("Tag ID not found: " + requestedTag.getId()));
+
+    private boolean isTagValid(Tag tag) {
+        return tag != null && (tag.getName() != null || !tag.getName().isEmpty());
     }
-    return tagRepository.findByNameIgnoreCase(requestedTag.getName())
-        .orElseGet(() -> createNewTag(requestedTag));
-  }
 
-  private boolean isTagValid(Tag tag) {
-    return tag != null && (tag.getName() != null || !tag.getName().isEmpty());
-  }
-
-  private Tag createNewTag(Tag tag) {
-    Tag newTag = new Tag();
-    newTag.setName(tag.getName());
-    return tagRepository.save(newTag);
-  }
+    private Tag createNewTag(Tag tag) {
+        Tag newTag = new Tag();
+        newTag.setName(tag.getName());
+        return tagRepository.save(newTag);
+    }
 }

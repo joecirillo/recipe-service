@@ -10,22 +10,22 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface RecipeTagMapper {
 
-  @Mapping(target = "tag.id", source = "id")
-  @Mapping(target = "tag.name", source = "name")
-  @Mapping(target = "recipeTagId", source = "recipeTagId")
-  RecipeTag toEntity(RecipeTagResponseDTO dto);
+    @Mapping(target = "tag.id", source = "id")
+    @Mapping(target = "tag.name", source = "name")
+    @Mapping(target = "recipeTagId", source = "recipeTagId")
+    RecipeTag toEntity(RecipeTagResponseDTO dto);
 
-  @Mapping(target = "tag.id", source = "id")
-  @Mapping(target = "tag.name", source = "name")
-  RecipeTag toEntity(RecipeTagSaveDTO dto);
+    @Mapping(target = "tag.id", source = "id")
+    @Mapping(target = "tag.name", source = "name")
+    RecipeTag toEntity(RecipeTagSaveDTO dto);
 
-  RecipeTag toEntity(RecipeTagUpdateDTO dto);
+    RecipeTag toEntity(RecipeTagUpdateDTO dto);
 
-  @Mapping(target = "id", source = "tag.id")
-  @Mapping(target = "name", source = "tag.name")
-  @Mapping(target = "recipeTagId", source = "recipeTagId")
-  RecipeTagResponseDTO toDTO(RecipeTag entity);
+    @Mapping(target = "id", source = "tag.id")
+    @Mapping(target = "name", source = "tag.name")
+    @Mapping(target = "recipeTagId", source = "recipeTagId")
+    RecipeTagResponseDTO toDTO(RecipeTag entity);
 
-  RecipeTagUpdateDTO toUpdateDTO(RecipeTag entity);
+    RecipeTagUpdateDTO toUpdateDTO(RecipeTag entity);
 
 }
