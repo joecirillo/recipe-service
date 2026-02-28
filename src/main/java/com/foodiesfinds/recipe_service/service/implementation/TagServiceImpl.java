@@ -20,7 +20,6 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public Tag resolveTag(Tag requestedTag) {
-        log.info("Resolving tag: {}", requestedTag);
         if (!isTagValid(requestedTag)) {
             throw new BadRequestException("Tag request must have either an ID or a name.");
         }
