@@ -7,7 +7,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+
 
 @Component
 public class ErrorResponseFactory {
@@ -18,7 +19,7 @@ public class ErrorResponseFactory {
 
         return ResponseEntity.status(status)
                 .body(ErrorResponse.builder()
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(Instant.now())
                         .status(status)
                         .message(message)
                         .path(currentPath)

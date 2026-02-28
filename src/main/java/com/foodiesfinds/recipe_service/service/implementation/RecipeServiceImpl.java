@@ -1,6 +1,5 @@
 package com.foodiesfinds.recipe_service.service.implementation;
 
-import com.foodiesfinds.recipe_service.core.exception.DuplicateEntityException;
 import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
 import com.foodiesfinds.recipe_service.dto.ingredient.RecipeIngredientUpdateDTO;
 import com.foodiesfinds.recipe_service.dto.instruction.InstructionStepUpdateDTO;
@@ -10,6 +9,7 @@ import com.foodiesfinds.recipe_service.dto.recipe.RecipeUpdateDTO;
 import com.foodiesfinds.recipe_service.dto.tag.RecipeTagUpdateDTO;
 import com.foodiesfinds.recipe_service.entity.Recipe;
 import com.foodiesfinds.recipe_service.entity.RecipeIngredient;
+import com.foodiesfinds.recipe_service.entity.RecipeTag;
 import com.foodiesfinds.recipe_service.mapper.RecipeIngredientMapper;
 import com.foodiesfinds.recipe_service.mapper.RecipeInstructionStepsMapper;
 import com.foodiesfinds.recipe_service.mapper.RecipeMapper;
@@ -25,10 +25,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-@Transactional
 @Slf4j
 public class RecipeServiceImpl implements RecipeService {
 
@@ -62,24 +62,25 @@ public class RecipeServiceImpl implements RecipeService {
     @Transactional
     public RecipeResponseDTO save(RecipeSaveDTO recipeSaveDTO) {
 
-        // We don't want multiple tags with the same name
-        long uniqueTagCount = recipeSaveDTO.getTags().stream()
-                .map(tag -> tag.getName().toLowerCase().trim())
-                .distinct()
-                .count();
-
-        if (uniqueTagCount < recipeSaveDTO.getTags().size()) {
-            throw new DuplicateEntityException("The same tag cannot be added more than once"
-                    + "to a single recipe.");
-        }
-
         Recipe recipe = recipeMapper.toEntity(recipeSaveDTO);
 
         // For each cuisine in the recipe, check if a cuisine with the same name already exists
         recipe.setCuisine(cuisineService.resolveCuisine(recipe.getCuisine()));
 
-        // For each tag in the recipe, check if a tag with the same name already exists
-        recipe.getTags().forEach(rt -> rt.setTag(tagService.resolveTag(rt.getTag())));
+        List<RecipeTag> uniqueRecipeTags = recipe.getTags().stream()
+                .peek(rt -> rt.setTag(tagService.resolveTag(rt.getTag())))
+                .collect(Collectors.toMap(
+                        rt -> rt.getTag().getName().toLowerCase().trim(),
+                        rt -> rt,
+                        (existing, replacement) -> existing
+                ))
+                .values()
+                .stream()
+                .toList();
+
+        // Replace the list
+        recipe.getTags().clear();
+        recipe.getTags().addAll(uniqueRecipeTags);
 
         // For each ingredient in the recipe, check if an ingredient with the same name already exists
         recipe.getIngredients().forEach(ri -> {
@@ -132,6 +133,8 @@ public class RecipeServiceImpl implements RecipeService {
             updateSteps(recipe, dto.getSteps());
         }
 
+        recipeRepository.flush();
+
         return recipeMapper.toDTO(recipe);
     }
 
@@ -162,12 +165,21 @@ public class RecipeServiceImpl implements RecipeService {
         recipe.getTags().clear();
         recipeRepository.flush();
 
-        dtos.stream()
-                .map(recipeTagMapper::toEntity)
-                .forEach(tag -> recipe.getTags().add(tag));
+        dtos.forEach(dto -> {
+            RecipeTag rt = recipeTagMapper.toEntity(dto);
+            rt.setTag(tagService.resolveTag(rt.getTag()));
+
+            boolean alreadyExists = recipe.getTags().stream()
+                    .anyMatch(existingRt -> existingRt.getTag().getId().equals(rt.getTag().getId()));
+
+            if (!alreadyExists) {
+                recipe.getTags().add(rt);
+            }
+        });
     }
 
     @Override
+    @Transactional
     public void delete(Long id) throws NotFoundException {
         log.info("Deleting recipe by id: {}", id);
         recipeRepository.findById(id)

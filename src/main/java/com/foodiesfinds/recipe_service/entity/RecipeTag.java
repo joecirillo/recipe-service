@@ -16,7 +16,7 @@ public class RecipeTag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recipe_tag_id")
     private Long recipeTagId;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tag_id", nullable = false)
     private Tag tag;
 }
