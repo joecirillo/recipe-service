@@ -19,6 +19,8 @@ public interface RecipeTagMapper {
     @Mapping(target = "tag.name", source = "name")
     RecipeTag toEntity(RecipeTagSaveDTO dto);
 
+    @Mapping(target = "tag.id", source = "id")
+    @Mapping(target = "tag.name", source = "name")
     RecipeTag toEntity(RecipeTagUpdateDTO dto);
 
     @Mapping(target = "id", source = "tag.id")

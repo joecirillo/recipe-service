@@ -8,8 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 
 @Data
@@ -21,6 +20,6 @@ public class RecipeResponseDTO extends BaseRecipeDTO<
         InstructionStepResponseDTO> {
     private Long id;
     private String imageUrl;
-    private LocalDate createdAt;
-    private LocalDateTime updatedAt;
+    private Instant createdAt;
+    private Instant updatedAt;
 }
