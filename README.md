@@ -1,9 +1,12 @@
 # Foodies Finds
 
 ## Overview
-Foodies Find is a backend service for the Foodies Finds application, which helps users discover and share their favorite food spots. This repository contains the server-side code, including APIs that call the database.
+
+Foodies Find is a backend service for the Foodies Finds application, which helps users discover and share their favorite
+food spots. This repository contains the server-side code, including APIs that call the database.
 
 ## Tech Stack
+
 - Java 21
 - Spring Boot 3.3.4
 - Maven
@@ -12,6 +15,7 @@ Foodies Find is a backend service for the Foodies Finds application, which helps
 - JPA/Hibernate
 
 ## Local Setup (MacOS)
+
 ### Prerequisites
 
 We recommend using Homebrew to manage package installations on MacOS. We will use Brew to
@@ -24,13 +28,16 @@ install most requirements.
 - Docker (https://www.docker.com/products/docker-desktop)
 
 ### Setup Steps
+
 1. Clone the Repository
 2. Run PostgreSQL:
    ```bash
    brew services start postgresql@14
    ```
 3. Create Database
-4. Update `application.properties` with your database credentials.
+4. Run this command to copy the `application-template.yml` to the main resources folder:
+   `cp devops/application-template.yml src/main/resources/application.yml`. If using the Supabase DB,
+   get the credentials from Joe.
 5. Build the Project:
    ```bash
       mvn clean install
