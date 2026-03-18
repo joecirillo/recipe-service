@@ -5,13 +5,12 @@ import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
 import com.foodiesfinds.recipe_service.entity.Cuisine;
 import com.foodiesfinds.recipe_service.repository.CuisineRepository;
 import com.foodiesfinds.recipe_service.service.CuisineService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class CuisineServiceIml implements CuisineService {
@@ -19,6 +18,7 @@ public class CuisineServiceIml implements CuisineService {
     private final CuisineRepository cuisineRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public Cuisine resolveCuisine(Cuisine requestedCuisine) {
         if (!isCuisineValid(requestedCuisine)) {
             throw new BadRequestException("Cuisine request must have either an ID or a name.");
@@ -36,6 +36,7 @@ public class CuisineServiceIml implements CuisineService {
         return req.getId() != null || (req.getName() != null && !req.getName().isBlank());
     }
 
+    @Transactional
     private Cuisine createNewCuisine(Cuisine cuisine) {
         Cuisine newCuisine = new Cuisine();
         newCuisine.setName(cuisine.getName());
