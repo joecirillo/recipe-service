@@ -5,7 +5,7 @@ import com.foodiesfinds.recipe_service.dto.core.Response;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeResponseDTO;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeSaveDTO;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeUpdateDTO;
-import com.foodiesfinds.recipe_service.service.implementation.RecipeServiceImpl;
+import com.foodiesfinds.recipe_service.service.RecipeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RequiredArgsConstructor
 public class RecipeController {
 
-    private final RecipeServiceImpl recipeService;
+    private final RecipeService recipeService;
 
     private final ResponseFactory response;
 

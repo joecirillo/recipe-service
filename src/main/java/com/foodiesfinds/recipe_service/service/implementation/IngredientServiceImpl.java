@@ -7,15 +7,14 @@ import com.foodiesfinds.recipe_service.entity.Ingredient;
 import com.foodiesfinds.recipe_service.mapper.IngredientMapper;
 import com.foodiesfinds.recipe_service.repository.IngredientRepository;
 import com.foodiesfinds.recipe_service.service.IngredientService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
-@Transactional
 public class IngredientServiceImpl implements IngredientService {
 
     private final IngredientMapper ingredientMapper;
@@ -23,11 +22,13 @@ public class IngredientServiceImpl implements IngredientService {
     private final IngredientRepository ingredientRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public IngredientResponseDTO getIngredientById(Long ingredientId) {
         return ingredientMapper.toDTO(ingredientRepository.findById(ingredientId).get());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Ingredient resolveIngredient(Ingredient requestedIngredient) {
         if (!isIngredientValid(requestedIngredient)) {
             throw new BadRequestException("Ingredient request must have either an ID or a name.");
@@ -45,6 +46,7 @@ public class IngredientServiceImpl implements IngredientService {
         return req.getId() != null || (req.getName() != null && !req.getName().isBlank());
     }
 
+    @Transactional
     private Ingredient createNewIngredient(String name) {
         log.info("Creating new ingredient with name: {}", name);
         Ingredient newIngredient = new Ingredient();

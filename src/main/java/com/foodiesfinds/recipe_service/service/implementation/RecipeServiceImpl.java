@@ -15,13 +15,16 @@ import com.foodiesfinds.recipe_service.mapper.RecipeInstructionStepsMapper;
 import com.foodiesfinds.recipe_service.mapper.RecipeMapper;
 import com.foodiesfinds.recipe_service.mapper.RecipeTagMapper;
 import com.foodiesfinds.recipe_service.repository.RecipeRepository;
+import com.foodiesfinds.recipe_service.service.CuisineService;
+import com.foodiesfinds.recipe_service.service.IngredientService;
 import com.foodiesfinds.recipe_service.service.RecipeService;
-import jakarta.transaction.Transactional;
+import com.foodiesfinds.recipe_service.service.TagService;
+import com.foodiesfinds.recipe_service.service.UnitService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,33 +35,17 @@ import java.util.stream.Collectors;
 @Slf4j
 public class RecipeServiceImpl implements RecipeService {
 
-
     private final RecipeRepository recipeRepository;
-
-    @Autowired
-    private final IngredientServiceImpl ingredientService;
-
-    @Autowired
-    private final CuisineServiceIml cuisineService;
-
-    @Autowired
-    private final TagServiceImpl tagService;
-
-    @Autowired
-    private final UnitServiceImpl unitService;
-
-    @Autowired
+    private final IngredientService ingredientService;
+    private final CuisineService cuisineService;
+    private final TagService tagService;
+    private final UnitService unitService;
     private final RecipeMapper recipeMapper;
-
-    @Autowired
     private final RecipeIngredientMapper recipeIngredientMapper;
-
-    @Autowired
     private final RecipeTagMapper recipeTagMapper;
-
-    @Autowired
     private final RecipeInstructionStepsMapper instructionStepMapper;
 
+    @Override
     @Transactional
     public RecipeResponseDTO save(RecipeSaveDTO recipeSaveDTO) {
 
@@ -93,17 +80,17 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<RecipeResponseDTO> list(int limit) {
         log.info("Fetching the first {} recipes", limit);
         List<Recipe> recipes = recipeRepository.findAll(PageRequest.of(0, limit)).toList();
-        List<RecipeResponseDTO> recipesDTO;
-        recipesDTO = recipes.stream()
+        return recipes.stream()
                 .map(recipeMapper::toDTO)
                 .toList();
-        return recipesDTO.stream().toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public RecipeResponseDTO get(Long id) {
         log.info("Fetching recipe by id: {}", id);
         Recipe recipeById = recipeRepository.findById(id)
@@ -188,6 +175,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<RecipeResponseDTO> search(String query) {
         List<Recipe> recipes = recipeRepository.findByNameContainingIgnoreCase(query);
         return recipes.stream()
