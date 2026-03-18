@@ -1,9 +1,9 @@
 package com.foodiesfinds.recipe_service.service;
 
+import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeResponseDTO;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeSaveDTO;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeUpdateDTO;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 
 import java.util.Collection;
 import java.util.List;
