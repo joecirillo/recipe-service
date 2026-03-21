@@ -1,6 +1,6 @@
 spring:
   config:
-    import: "aws-parameterstore:/foodies-finds/recipe-service/"
+    import: "optional:aws-parameterstore:/foodies-finds/recipe-service/"
   cloud:
     aws:
       region:
