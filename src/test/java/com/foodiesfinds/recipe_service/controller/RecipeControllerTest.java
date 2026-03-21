@@ -10,32 +10,27 @@ import com.foodiesfinds.recipe_service.dto.instruction.InstructionStepSaveDTO;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeResponseDTO;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeSaveDTO;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeUpdateDTO;
-import com.foodiesfinds.recipe_service.service.implementation.RecipeServiceImpl;
+import com.foodiesfinds.recipe_service.service.RecipeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(RecipeController.class)
 @Import({ResponseFactory.class, GlobalExceptionHandler.class, ErrorResponseFactory.class})
+@ActiveProfiles("test")
 class RecipeControllerTest {
 
     @Autowired
@@ -45,7 +40,7 @@ class RecipeControllerTest {
     ObjectMapper objectMapper;
 
     @MockBean
-    RecipeServiceImpl recipeService;
+    RecipeService recipeService;
 
     private RecipeResponseDTO buildResponseDTO() {
         RecipeResponseDTO dto = new RecipeResponseDTO();
