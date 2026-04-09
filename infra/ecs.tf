@@ -35,6 +35,25 @@ resource "aws_ecs_task_definition" "recipe_service" {
           awslogs-stream-prefix = "ecs"
         }
       }
+
+      secrets = [
+        {
+          name      = "SPRING_DATASOURCE_URL"
+          valueFrom = "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter/foodies-finds/recipe-service/spring.datasource.url"
+        },
+        {
+          name      = "SPRING_DATASOURCE_USERNAME"
+          valueFrom = "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter/foodies-finds/recipe-service/spring.datasource.username"
+        },
+        {
+          name      = "SPRING_DATASOURCE_PASSWORD"
+          valueFrom = "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter/foodies-finds/recipe-service/spring.datasource.password"
+        },
+        {
+          name      = "SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA"
+          valueFrom = "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter/foodies-finds/recipe-service/spring.jpa.properties.hibernate.default_schema"
+        }
+      ]
     }
   ])
 }
