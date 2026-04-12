@@ -15,5 +15,4 @@ public class RecipeUpdateDTO extends BaseRecipeDTO<
         RecipeIngredientUpdateDTO,
         RecipeTagUpdateDTO,
         InstructionStepUpdateDTO> {
-    private String imageUrl;
 }

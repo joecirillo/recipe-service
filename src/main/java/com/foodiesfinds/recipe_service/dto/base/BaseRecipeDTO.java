@@ -19,7 +19,7 @@ public abstract class BaseRecipeDTO<
         I extends BaseRecipeIngredientDTO,
         T extends BaseRecipeTagDTO,
         S extends BaseInstructionStepDTO> {
-    @Size(min = 2, max = 150, message = "Name must be between 2 and 150 characters.")
+    @Size(min = 2, max = 150, message = "Recipe name must be between 2 to 150 characters.")
     private String name;
     private String description;
     private Short calories;

@@ -19,7 +19,6 @@ public class RecipeResponseDTO extends BaseRecipeDTO<
         RecipeTagResponseDTO,
         InstructionStepResponseDTO> {
     private Long id;
-    private String imageUrl;
     private Instant createdAt;
     private Instant updatedAt;
 }
