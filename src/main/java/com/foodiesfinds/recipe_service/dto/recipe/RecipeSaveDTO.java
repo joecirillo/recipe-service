@@ -46,21 +46,21 @@ public class RecipeSaveDTO extends BaseRecipeDTO<
 
     @Override
     @NotNull
-    @Positive(message = "Preparation time must be a more than zero.")
+    @Positive(message = "Preparation time cannot be zero minutes.")
     public short getPreparationTime() {
         return super.getPreparationTime();
     }
 
     @Override
     @NotNull(message = "Recipe must have at least one ingredient.")
-    @NotEmpty(message = "Ingredients list cannot be empty.")
+    @NotEmpty(message = "There must be at least one ingredient.")
     public List<RecipeIngredientSaveDTO> getIngredients() {
         return super.getIngredients();
     }
 
     @Override
     @NotNull(message = "Recipe must have at least one step.")
-    @NotEmpty(message = "Steps list cannot be empty.")
+    @NotEmpty(message = "There must be at least one step.")
     public List<InstructionStepSaveDTO> getSteps() {
         return super.getSteps();
     }
