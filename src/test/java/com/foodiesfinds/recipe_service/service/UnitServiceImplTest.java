@@ -1,7 +1,9 @@
 package com.foodiesfinds.recipe_service.service;
 
 import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
+import com.foodiesfinds.recipe_service.dto.UnitResponseDTO;
 import com.foodiesfinds.recipe_service.entity.Unit;
+import com.foodiesfinds.recipe_service.mapper.UnitMapper;
 import com.foodiesfinds.recipe_service.repository.UnitRepository;
 import com.foodiesfinds.recipe_service.service.implementation.UnitServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -10,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,6 +25,9 @@ class UnitServiceImplTest {
 
     @Mock
     UnitRepository unitRepository;
+
+    @Mock
+    UnitMapper unitMapper;
 
     @InjectMocks
     UnitServiceImpl unitService;
@@ -45,5 +51,18 @@ class UnitServiceImplTest {
         assertThatThrownBy(() -> unitService.resolveUnit(unit))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("99");
+    }
+
+    @Test
+    void list_returnsAllUnits() {
+        Unit unit = new Unit(1L, "cup", "c");
+        UnitResponseDTO dto = new UnitResponseDTO();
+        when(unitRepository.findAll()).thenReturn(List.of(unit));
+        when(unitMapper.toDTO(unit)).thenReturn(dto);
+
+        List<UnitResponseDTO> result = unitService.list();
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0)).isEqualTo(dto);
     }
 }

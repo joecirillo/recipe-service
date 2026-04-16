@@ -2,7 +2,10 @@ package com.foodiesfinds.recipe_service.service;
 
 import com.foodiesfinds.recipe_service.core.exception.BadRequestException;
 import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
+import com.foodiesfinds.recipe_service.dto.NamedEntityDTO;
+import com.foodiesfinds.recipe_service.dto.tag.TagResponseDTO;
 import com.foodiesfinds.recipe_service.entity.Tag;
+import com.foodiesfinds.recipe_service.mapper.TagMapper;
 import com.foodiesfinds.recipe_service.repository.TagRepository;
 import com.foodiesfinds.recipe_service.service.implementation.TagServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -11,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,6 +28,9 @@ class TagServiceImplTest {
 
     @Mock
     TagRepository tagRepository;
+
+    @Mock
+    TagMapper tagMapper;
 
     @InjectMocks
     TagServiceImpl tagService;
@@ -78,5 +85,30 @@ class TagServiceImplTest {
     void resolveTag_nullTag_throwsBadRequest() {
         assertThatThrownBy(() -> tagService.resolveTag(null))
                 .isInstanceOf(BadRequestException.class);
+    }
+
+    @Test
+    void list_returnsAllTags() {
+        Tag tag = new Tag(1L, "vegan");
+        TagResponseDTO dto = new TagResponseDTO();
+        when(tagRepository.findAll()).thenReturn(List.of(tag));
+        when(tagMapper.toDTO(tag)).thenReturn(dto);
+
+        List<TagResponseDTO> result = tagService.list();
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0)).isEqualTo(dto);
+    }
+
+    @Test
+    void search_returnsMatchingTags() {
+        Tag tag = new Tag(3L, "vegan");
+        when(tagRepository.findByNameContainingIgnoreCase("veg")).thenReturn(List.of(tag));
+
+        List<NamedEntityDTO> result = tagService.search("veg");
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getId()).isEqualTo(3L);
+        assertThat(result.get(0).getName()).isEqualTo("vegan");
     }
 }

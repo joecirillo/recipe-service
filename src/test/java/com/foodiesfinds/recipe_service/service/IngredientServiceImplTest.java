@@ -2,6 +2,7 @@ package com.foodiesfinds.recipe_service.service;
 
 import com.foodiesfinds.recipe_service.core.exception.BadRequestException;
 import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
+import com.foodiesfinds.recipe_service.dto.NamedEntityDTO;
 import com.foodiesfinds.recipe_service.dto.ingredient.IngredientResponseDTO;
 import com.foodiesfinds.recipe_service.entity.Ingredient;
 import com.foodiesfinds.recipe_service.mapper.IngredientMapper;
@@ -13,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -106,5 +108,30 @@ class IngredientServiceImplTest {
 
         assertThatThrownBy(() -> ingredientService.resolveIngredient(invalid))
                 .isInstanceOf(BadRequestException.class);
+    }
+
+    @Test
+    void list_returnsAllIngredients() {
+        Ingredient ingredient = new Ingredient(1L, "flour");
+        IngredientResponseDTO dto = new IngredientResponseDTO();
+        when(ingredientRepository.findAll()).thenReturn(List.of(ingredient));
+        when(ingredientMapper.toDTO(ingredient)).thenReturn(dto);
+
+        List<IngredientResponseDTO> result = ingredientService.list();
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0)).isEqualTo(dto);
+    }
+
+    @Test
+    void search_returnsMatchingIngredients() {
+        Ingredient ingredient = new Ingredient(5L, "flour");
+        when(ingredientRepository.findByNameContainingIgnoreCase("flo")).thenReturn(List.of(ingredient));
+
+        List<NamedEntityDTO> result = ingredientService.search("flo");
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getId()).isEqualTo(5L);
+        assertThat(result.get(0).getName()).isEqualTo("flour");
     }
 }

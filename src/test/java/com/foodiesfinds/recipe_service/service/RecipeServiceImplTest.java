@@ -1,6 +1,8 @@
 package com.foodiesfinds.recipe_service.service;
 
 import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
+import com.foodiesfinds.recipe_service.dto.NamedEntityDTO;
+import com.foodiesfinds.recipe_service.dto.RecipeSearchParams;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeResponseDTO;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeSaveDTO;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeUpdateDTO;
@@ -29,9 +31,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.jpa.domain.Specification;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -116,21 +119,22 @@ class RecipeServiceImplTest {
     @Test
     void list_returnsMappedRecipes() {
         Recipe recipe = new Recipe();
-        RecipeResponseDTO dto = buildResponseDTO();
+        recipe.setId(1L);
+        recipe.setName("Pasta");
         when(recipeRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(recipe)));
-        when(recipeMapper.toDTO(recipe)).thenReturn(dto);
 
-        Collection<RecipeResponseDTO> result = recipeService.list(30);
+        List<NamedEntityDTO> result = recipeService.list(30);
 
         assertThat(result).hasSize(1);
-        assertThat(result.iterator().next().getId()).isEqualTo(1L);
+        assertThat(result.get(0).getId()).isEqualTo(1L);
+        assertThat(result.get(0).getName()).isEqualTo("Pasta");
     }
 
     @Test
     void list_returnsEmpty_whenNoRecipes() {
         when(recipeRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of()));
 
-        Collection<RecipeResponseDTO> result = recipeService.list(30);
+        List<NamedEntityDTO> result = recipeService.list(30);
 
         assertThat(result).isEmpty();
     }
@@ -182,24 +186,37 @@ class RecipeServiceImplTest {
     @Test
     void search_returnsMatchingRecipes() {
         Recipe recipe = new Recipe();
+        recipe.setId(1L);
         recipe.setName("Pasta Bolognese");
-        RecipeResponseDTO dto = buildResponseDTO();
-        when(recipeRepository.findByNameContainingIgnoreCase("pasta")).thenReturn(List.of(recipe));
-        when(recipeMapper.toDTO(recipe)).thenReturn(dto);
+        when(recipeRepository.findAll(any(Specification.class))).thenReturn(List.of(recipe));
 
-        List<RecipeResponseDTO> result = recipeService.search("pasta");
+        List<NamedEntityDTO> result = recipeService.search(new RecipeSearchParams("pasta", null, null, null));
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getId()).isEqualTo(1L);
+        assertThat(result.get(0).getName()).isEqualTo("Pasta Bolognese");
     }
 
     @Test
     void search_returnsEmpty_whenNoMatches() {
-        when(recipeRepository.findByNameContainingIgnoreCase("xyz")).thenReturn(List.of());
+        when(recipeRepository.findAll(any(Specification.class))).thenReturn(List.of());
 
-        List<RecipeResponseDTO> result = recipeService.search("xyz");
+        List<NamedEntityDTO> result = recipeService.search(new RecipeSearchParams("xyz", null, null, null));
 
         assertThat(result).isEmpty();
+    }
+
+    @Test
+    void search_withMultipleFilters_returnsMatchingRecipes() {
+        Recipe recipe = new Recipe();
+        recipe.setId(2L);
+        recipe.setName("Vegan Pasta");
+        when(recipeRepository.findAll(any(Specification.class))).thenReturn(List.of(recipe));
+
+        List<NamedEntityDTO> result = recipeService.search(new RecipeSearchParams("pasta", "vegan", null, null));
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getId()).isEqualTo(2L);
     }
 
     // --- update ---
