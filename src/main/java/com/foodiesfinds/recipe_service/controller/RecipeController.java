@@ -1,6 +1,7 @@
 package com.foodiesfinds.recipe_service.controller;
 
 import com.foodiesfinds.recipe_service.core.response.ResponseFactory;
+import com.foodiesfinds.recipe_service.dto.RecipeSearchParams;
 import com.foodiesfinds.recipe_service.dto.core.Response;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeResponseDTO;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeSaveDTO;
@@ -66,9 +67,13 @@ public class RecipeController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Response> searchRecipe(@RequestParam("query") String query) {
-        return response.buildResponse(OK, "Recipe queried",
-                recipeService.search(query));
+    public ResponseEntity<Response> searchRecipes(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String tag,
+            @RequestParam(required = false) String cuisine,
+            @RequestParam(required = false) String ingredient) {
+        return response.buildResponse(OK, "Recipes queried",
+                recipeService.search(new RecipeSearchParams(name, tag, cuisine, ingredient)));
     }
 
 }
