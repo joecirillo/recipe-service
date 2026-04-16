@@ -9,6 +9,6 @@ public interface CuisineMapper {
 
     Cuisine toEntity(CuisineResponseDTO name);
 
-    String toDTO(Cuisine entity);
+    CuisineResponseDTO toDTO(Cuisine entity);
 
 }

@@ -1,6 +1,8 @@
 package com.foodiesfinds.recipe_service.service.implementation;
 
 import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
+import com.foodiesfinds.recipe_service.dto.NamedEntityDTO;
+import com.foodiesfinds.recipe_service.dto.RecipeSearchParams;
 import com.foodiesfinds.recipe_service.dto.ingredient.RecipeIngredientUpdateDTO;
 import com.foodiesfinds.recipe_service.dto.instruction.InstructionStepUpdateDTO;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeResponseDTO;
@@ -16,6 +18,7 @@ import com.foodiesfinds.recipe_service.mapper.RecipeMapper;
 import com.foodiesfinds.recipe_service.mapper.RecipeTagMapper;
 import com.foodiesfinds.recipe_service.repository.RecipeRepository;
 import com.foodiesfinds.recipe_service.service.CuisineService;
+import com.foodiesfinds.recipe_service.specification.RecipeSpecification;
 import com.foodiesfinds.recipe_service.service.IngredientService;
 import com.foodiesfinds.recipe_service.service.RecipeService;
 import com.foodiesfinds.recipe_service.service.TagService;
@@ -26,7 +29,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,11 +83,11 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     @Transactional(readOnly = true)
-    public Collection<RecipeResponseDTO> list(int limit) {
+    public List<NamedEntityDTO> list(int limit) {
         log.info("Fetching the first {} recipes", limit);
         List<Recipe> recipes = recipeRepository.findAll(PageRequest.of(0, limit)).toList();
         return recipes.stream()
-                .map(recipeMapper::toDTO)
+                .map(recipe -> new NamedEntityDTO(recipe.getId(), recipe.getName()))
                 .toList();
     }
 
@@ -176,11 +178,9 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<RecipeResponseDTO> search(String query) {
-        List<Recipe> recipes = recipeRepository.findByNameContainingIgnoreCase(query);
-        return recipes.stream()
-                .peek(recipe -> log.info("Mapped recipe to DTO: {}", recipe.getName()))
-                .map(recipeMapper::toDTO)
+    public List<NamedEntityDTO> search(RecipeSearchParams params) {
+        return recipeRepository.findAll(RecipeSpecification.buildFrom(params)).stream()
+                .map(recipe -> new NamedEntityDTO(recipe.getId(), recipe.getName()))
                 .toList();
     }
 
