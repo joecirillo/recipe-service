@@ -1,6 +1,7 @@
 package com.foodiesfinds.recipe_service.service;
 
 import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
+import com.foodiesfinds.recipe_service.dto.NamedEntityDTO;
 import com.foodiesfinds.recipe_service.dto.UnitResponseDTO;
 import com.foodiesfinds.recipe_service.entity.Unit;
 import com.foodiesfinds.recipe_service.mapper.UnitMapper;
@@ -60,7 +61,7 @@ class UnitServiceImplTest {
         when(unitRepository.findAll()).thenReturn(List.of(unit));
         when(unitMapper.toDTO(unit)).thenReturn(dto);
 
-        List<UnitResponseDTO> result = unitService.list();
+        List<NamedEntityDTO> result = unitService.list();
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0)).isEqualTo(dto);
