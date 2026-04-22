@@ -2,7 +2,7 @@ package com.foodiesfinds.recipe_service.controller;
 
 import com.foodiesfinds.recipe_service.core.response.ResponseFactory;
 import com.foodiesfinds.recipe_service.dto.core.Response;
-import com.foodiesfinds.recipe_service.service.TagService;
+import com.foodiesfinds.recipe_service.service.IngredientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,21 +13,21 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/tag")
+@RequestMapping("/ingredient")
 @RequiredArgsConstructor
-public class TagController {
+public class IngredientController {
 
-    private final TagService tagService;
+    private final IngredientService ingredientService;
     private final ResponseFactory response;
 
     @GetMapping("/list")
-    public ResponseEntity<Response> getTags() {
-        return response.buildResponse(OK, "Tags retrieved", tagService.list());
+    public ResponseEntity<Response> getIngredients() {
+        return response.buildResponse(OK, "Ingredients retrieved", ingredientService.list());
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Response> searchTags(@RequestParam("query") String query) {
-        return response.buildResponse(OK, "Tags queried", tagService.search(query));
+    public ResponseEntity<Response> searchIngredients(@RequestParam("query") String query) {
+        return response.buildResponse(OK, "Ingredients queried", ingredientService.search(query));
     }
 
 }

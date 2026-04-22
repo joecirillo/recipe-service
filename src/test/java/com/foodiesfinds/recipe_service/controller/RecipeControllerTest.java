@@ -5,6 +5,8 @@ import com.foodiesfinds.recipe_service.core.exception.GlobalExceptionHandler;
 import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
 import com.foodiesfinds.recipe_service.core.response.ErrorResponseFactory;
 import com.foodiesfinds.recipe_service.core.response.ResponseFactory;
+import com.foodiesfinds.recipe_service.dto.NamedEntityDTO;
+import com.foodiesfinds.recipe_service.dto.RecipeSearchParams;
 import com.foodiesfinds.recipe_service.dto.ingredient.RecipeIngredientSaveDTO;
 import com.foodiesfinds.recipe_service.dto.instruction.InstructionStepSaveDTO;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeResponseDTO;
@@ -42,6 +44,10 @@ class RecipeControllerTest {
     @MockBean
     RecipeService recipeService;
 
+    private NamedEntityDTO buildNamedDTO() {
+        return new NamedEntityDTO(1L, "Pasta");
+    }
+
     private RecipeResponseDTO buildResponseDTO() {
         RecipeResponseDTO dto = new RecipeResponseDTO();
         dto.setId(1L);
@@ -71,7 +77,7 @@ class RecipeControllerTest {
 
     @Test
     void getRecipes() throws Exception {
-        when(recipeService.list(30)).thenReturn(List.of(buildResponseDTO(), buildResponseDTO()));
+        when(recipeService.list(30)).thenReturn(List.of(buildNamedDTO(), buildNamedDTO()));
 
         mockMvc.perform(get("/recipe/list"))
                 .andExpect(status().isOk())
@@ -143,19 +149,61 @@ class RecipeControllerTest {
     }
 
     @Test
-    void searchRecipe() throws Exception {
-        when(recipeService.search("pasta")).thenReturn(List.of(buildResponseDTO()));
+    void searchRecipes_byName() throws Exception {
+        when(recipeService.search(new RecipeSearchParams("pasta", null, null, null)))
+                .thenReturn(List.of(buildNamedDTO()));
 
-        mockMvc.perform(get("/recipe/search").param("query", "pasta"))
+        mockMvc.perform(get("/recipe/search").param("name", "pasta"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isNotEmpty());
     }
 
     @Test
-    void searchRecipe_emptyResults() throws Exception {
-        when(recipeService.search("xyz")).thenReturn(List.of());
+    void searchRecipes_byTag() throws Exception {
+        when(recipeService.search(new RecipeSearchParams(null, "vegan", null, null)))
+                .thenReturn(List.of(buildNamedDTO()));
 
-        mockMvc.perform(get("/recipe/search").param("query", "xyz"))
+        mockMvc.perform(get("/recipe/search").param("tag", "vegan"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isNotEmpty());
+    }
+
+    @Test
+    void searchRecipes_byCuisine() throws Exception {
+        when(recipeService.search(new RecipeSearchParams(null, null, "italian", null)))
+                .thenReturn(List.of(buildNamedDTO()));
+
+        mockMvc.perform(get("/recipe/search").param("cuisine", "italian"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isNotEmpty());
+    }
+
+    @Test
+    void searchRecipes_byIngredient() throws Exception {
+        when(recipeService.search(new RecipeSearchParams(null, null, null, "flour")))
+                .thenReturn(List.of(buildNamedDTO()));
+
+        mockMvc.perform(get("/recipe/search").param("ingredient", "flour"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isNotEmpty());
+    }
+
+    @Test
+    void searchRecipes_multipleFilters() throws Exception {
+        when(recipeService.search(new RecipeSearchParams("pasta", "vegan", null, null)))
+                .thenReturn(List.of(buildNamedDTO()));
+
+        mockMvc.perform(get("/recipe/search").param("name", "pasta").param("tag", "vegan"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isNotEmpty());
+    }
+
+    @Test
+    void searchRecipes_emptyResults() throws Exception {
+        when(recipeService.search(new RecipeSearchParams("xyz", null, null, null)))
+                .thenReturn(List.of());
+
+        mockMvc.perform(get("/recipe/search").param("name", "xyz"))
                 .andExpect(status().isOk());
     }
 }

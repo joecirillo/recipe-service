@@ -2,11 +2,13 @@ package com.foodiesfinds.recipe_service.service.implementation;
 
 import com.foodiesfinds.recipe_service.core.exception.BadRequestException;
 import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
+import com.foodiesfinds.recipe_service.dto.NamedEntityDTO;
 import com.foodiesfinds.recipe_service.dto.ingredient.IngredientResponseDTO;
 import com.foodiesfinds.recipe_service.entity.Ingredient;
 import com.foodiesfinds.recipe_service.mapper.IngredientMapper;
 import com.foodiesfinds.recipe_service.repository.IngredientRepository;
 import com.foodiesfinds.recipe_service.service.IngredientService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,22 @@ public class IngredientServiceImpl implements IngredientService {
     private boolean isIngredientValid(Ingredient req) {
         log.info("Validating ingredient request: {}", req);
         return req.getId() != null || (req.getName() != null && !req.getName().isBlank());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<IngredientResponseDTO> list() {
+        return ingredientRepository.findAll().stream()
+                .map(ingredientMapper::toDTO)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<NamedEntityDTO> search(String query) {
+        return ingredientRepository.findByNameContainingIgnoreCase(query).stream()
+                .map(i -> new NamedEntityDTO(i.getId(), i.getName()))
+                .toList();
     }
 
     @Transactional

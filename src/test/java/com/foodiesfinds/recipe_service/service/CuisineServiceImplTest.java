@@ -2,7 +2,10 @@ package com.foodiesfinds.recipe_service.service;
 
 import com.foodiesfinds.recipe_service.core.exception.BadRequestException;
 import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
+import com.foodiesfinds.recipe_service.dto.CuisineResponseDTO;
+import com.foodiesfinds.recipe_service.dto.NamedEntityDTO;
 import com.foodiesfinds.recipe_service.entity.Cuisine;
+import com.foodiesfinds.recipe_service.mapper.CuisineMapper;
 import com.foodiesfinds.recipe_service.repository.CuisineRepository;
 import com.foodiesfinds.recipe_service.service.implementation.CuisineServiceIml;
 import org.junit.jupiter.api.Test;
@@ -11,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,6 +28,9 @@ class CuisineServiceImplTest {
 
     @Mock
     CuisineRepository cuisineRepository;
+
+    @Mock
+    CuisineMapper cuisineMapper;
 
     @InjectMocks
     CuisineServiceIml cuisineService;
@@ -88,5 +95,30 @@ class CuisineServiceImplTest {
 
         assertThatThrownBy(() -> cuisineService.resolveCuisine(invalid))
                 .isInstanceOf(BadRequestException.class);
+    }
+
+    @Test
+    void list_returnsAllCuisines() {
+        Cuisine cuisine = new Cuisine((short) 1, "Italian");
+        CuisineResponseDTO dto = new CuisineResponseDTO();
+        when(cuisineRepository.findAll()).thenReturn(List.of(cuisine));
+        when(cuisineMapper.toDTO(cuisine)).thenReturn(dto);
+
+        List<CuisineResponseDTO> result = cuisineService.list();
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0)).isEqualTo(dto);
+    }
+
+    @Test
+    void search_returnsMatchingCuisines() {
+        Cuisine cuisine = new Cuisine((short) 2, "Italian");
+        when(cuisineRepository.findByNameContainingIgnoreCase("ital")).thenReturn(List.of(cuisine));
+
+        List<NamedEntityDTO> result = cuisineService.search("ital");
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getId()).isEqualTo(2L);
+        assertThat(result.get(0).getName()).isEqualTo("Italian");
     }
 }
