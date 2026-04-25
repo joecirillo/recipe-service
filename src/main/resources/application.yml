@@ -14,3 +14,8 @@ spring:
       ddl-auto: validate
       format_sql: true
     show-sql: true
+
+api:
+  keys:
+    user: ${API_KEY}
+    admin: ${API_KEY_ADMIN}

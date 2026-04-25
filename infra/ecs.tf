@@ -52,6 +52,14 @@ resource "aws_ecs_task_definition" "recipe_service" {
         {
           name      = "SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA"
           valueFrom = "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter/foodies-finds/recipe-service/spring.jpa.properties.hibernate.default_schema"
+        },
+        {
+          name      = "API_KEY"
+          valueFrom = "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter/foodies-finds/recipe-service/api.keys.user"
+        },
+        {
+          name      = "API_KEY_ADMIN"
+          valueFrom = "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter/foodies-finds/recipe-service/api.keys.admin"
         }
       ]
     }
