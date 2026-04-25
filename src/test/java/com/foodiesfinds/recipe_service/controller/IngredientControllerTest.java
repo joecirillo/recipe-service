@@ -1,6 +1,8 @@
 package com.foodiesfinds.recipe_service.controller;
 
+import com.foodiesfinds.recipe_service.core.config.ApiKeyProperties;
 import com.foodiesfinds.recipe_service.core.exception.GlobalExceptionHandler;
+import com.foodiesfinds.recipe_service.core.filter.ApiKeyFilter;
 import com.foodiesfinds.recipe_service.core.response.ErrorResponseFactory;
 import com.foodiesfinds.recipe_service.core.response.ResponseFactory;
 import com.foodiesfinds.recipe_service.dto.NamedEntityDTO;
@@ -22,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(IngredientController.class)
-@Import({ResponseFactory.class, GlobalExceptionHandler.class, ErrorResponseFactory.class})
+@Import({ResponseFactory.class, GlobalExceptionHandler.class, ErrorResponseFactory.class, ApiKeyFilter.class, ApiKeyProperties.class})
 @ActiveProfiles("test")
 class IngredientControllerTest {
 
@@ -43,7 +45,7 @@ class IngredientControllerTest {
     void getIngredients() throws Exception {
         when(ingredientService.list()).thenReturn(List.of(buildIngredientDTO()));
 
-        mockMvc.perform(get("/ingredient/list"))
+        mockMvc.perform(get("/ingredient/list").header("X-Api-Key", "test-api-key"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isNotEmpty());
     }
@@ -52,7 +54,7 @@ class IngredientControllerTest {
     void searchIngredients() throws Exception {
         when(ingredientService.search("flo")).thenReturn(List.of(new NamedEntityDTO(1L, "flour")));
 
-        mockMvc.perform(get("/ingredient/search").param("query", "flo"))
+        mockMvc.perform(get("/ingredient/search").header("X-Api-Key", "test-api-key").param("query", "flo"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isNotEmpty());
     }
@@ -61,7 +63,13 @@ class IngredientControllerTest {
     void searchIngredients_emptyResults() throws Exception {
         when(ingredientService.search("xyz")).thenReturn(List.of());
 
-        mockMvc.perform(get("/ingredient/search").param("query", "xyz"))
+        mockMvc.perform(get("/ingredient/search").header("X-Api-Key", "test-api-key").param("query", "xyz"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void missingApiKey_returnsUnauthorized() throws Exception {
+        mockMvc.perform(get("/ingredient/list"))
+                .andExpect(status().isUnauthorized());
     }
 }
