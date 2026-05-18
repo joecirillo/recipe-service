@@ -1,6 +1,8 @@
 package com.foodiesfinds.recipe_service.controller;
 
+import com.foodiesfinds.recipe_service.core.config.ApiKeyProperties;
 import com.foodiesfinds.recipe_service.core.exception.GlobalExceptionHandler;
+import com.foodiesfinds.recipe_service.core.filter.ApiKeyFilter;
 import com.foodiesfinds.recipe_service.core.response.ErrorResponseFactory;
 import com.foodiesfinds.recipe_service.core.response.ResponseFactory;
 import com.foodiesfinds.recipe_service.dto.NamedEntityDTO;
@@ -21,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UnitController.class)
-@Import({ResponseFactory.class, GlobalExceptionHandler.class, ErrorResponseFactory.class})
+@Import({ResponseFactory.class, GlobalExceptionHandler.class, ErrorResponseFactory.class, ApiKeyFilter.class, ApiKeyProperties.class})
 @ActiveProfiles("test")
 class UnitControllerTest {
 
@@ -35,8 +37,14 @@ class UnitControllerTest {
     void getUnits() throws Exception {
         when(unitService.list()).thenReturn(List.of(new NamedEntityDTO(1L, "cup")));
 
-        mockMvc.perform(get("/unit/list"))
+        mockMvc.perform(get("/unit/list").header("X-Api-Key", "test-api-key"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isNotEmpty());
+    }
+
+    @Test
+    void missingApiKey_returnsUnauthorized() throws Exception {
+        mockMvc.perform(get("/unit/list"))
+                .andExpect(status().isUnauthorized());
     }
 }

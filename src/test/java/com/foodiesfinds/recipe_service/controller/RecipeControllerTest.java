@@ -1,8 +1,10 @@
 package com.foodiesfinds.recipe_service.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.foodiesfinds.recipe_service.core.config.ApiKeyProperties;
 import com.foodiesfinds.recipe_service.core.exception.GlobalExceptionHandler;
 import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
+import com.foodiesfinds.recipe_service.core.filter.ApiKeyFilter;
 import com.foodiesfinds.recipe_service.core.response.ErrorResponseFactory;
 import com.foodiesfinds.recipe_service.core.response.ResponseFactory;
 import com.foodiesfinds.recipe_service.dto.NamedEntityDTO;
@@ -31,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(RecipeController.class)
-@Import({ResponseFactory.class, GlobalExceptionHandler.class, ErrorResponseFactory.class})
+@Import({ResponseFactory.class, GlobalExceptionHandler.class, ErrorResponseFactory.class, ApiKeyFilter.class, ApiKeyProperties.class})
 @ActiveProfiles("test")
 class RecipeControllerTest {
 
@@ -79,7 +81,7 @@ class RecipeControllerTest {
     void getRecipes() throws Exception {
         when(recipeService.list(30)).thenReturn(List.of(buildNamedDTO(), buildNamedDTO()));
 
-        mockMvc.perform(get("/recipe/list"))
+        mockMvc.perform(get("/recipe/list").header("X-Api-Key", "test-api-key"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isNotEmpty());
     }
@@ -89,6 +91,7 @@ class RecipeControllerTest {
         when(recipeService.save(any())).thenReturn(buildResponseDTO());
 
         mockMvc.perform(post("/recipe/save")
+                        .header("X-Api-Key", "test-api-key")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(buildValidSaveDTO())))
                 .andExpect(status().isCreated())
@@ -99,6 +102,7 @@ class RecipeControllerTest {
     @Test
     void saveRecipe_validationFailure() throws Exception {
         mockMvc.perform(post("/recipe/save")
+                        .header("X-Api-Key", "test-api-key")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
                 .andExpect(status().isBadRequest());
@@ -108,7 +112,7 @@ class RecipeControllerTest {
     void getRecipe() throws Exception {
         when(recipeService.get(1L)).thenReturn(buildResponseDTO());
 
-        mockMvc.perform(get("/recipe/get/1"))
+        mockMvc.perform(get("/recipe/get/1").header("X-Api-Key", "test-api-key"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Recipe retrieved"));
     }
@@ -117,7 +121,7 @@ class RecipeControllerTest {
     void getRecipe_notFound() throws Exception {
         when(recipeService.get(99L)).thenThrow(new NotFoundException("Recipe not found"));
 
-        mockMvc.perform(get("/recipe/get/99"))
+        mockMvc.perform(get("/recipe/get/99").header("X-Api-Key", "test-api-key"))
                 .andExpect(status().isNotFound());
     }
 
@@ -126,6 +130,7 @@ class RecipeControllerTest {
         when(recipeService.update(any(), eq(1L))).thenReturn(buildResponseDTO());
 
         mockMvc.perform(patch("/recipe/update/1")
+                        .header("X-Api-Key", "test-api-key")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new RecipeUpdateDTO())))
                 .andExpect(status().isOk())
@@ -136,7 +141,7 @@ class RecipeControllerTest {
     void deleteRecipe() throws Exception {
         doNothing().when(recipeService).delete(1L);
 
-        mockMvc.perform(delete("/recipe/delete/1"))
+        mockMvc.perform(delete("/recipe/delete/1").header("X-Api-Key", "test-admin-key"))
                 .andExpect(status().isNoContent());
     }
 
@@ -144,8 +149,14 @@ class RecipeControllerTest {
     void deleteRecipe_notFound() throws Exception {
         doThrow(new NotFoundException("Recipe not found")).when(recipeService).delete(99L);
 
-        mockMvc.perform(delete("/recipe/delete/99"))
+        mockMvc.perform(delete("/recipe/delete/99").header("X-Api-Key", "test-admin-key"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void deleteRecipe_userKeyRejected() throws Exception {
+        mockMvc.perform(delete("/recipe/delete/1").header("X-Api-Key", "test-api-key"))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -153,7 +164,7 @@ class RecipeControllerTest {
         when(recipeService.search(new RecipeSearchParams("pasta", null, null, null)))
                 .thenReturn(List.of(buildNamedDTO()));
 
-        mockMvc.perform(get("/recipe/search").param("name", "pasta"))
+        mockMvc.perform(get("/recipe/search").header("X-Api-Key", "test-api-key").param("name", "pasta"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isNotEmpty());
     }
@@ -163,7 +174,7 @@ class RecipeControllerTest {
         when(recipeService.search(new RecipeSearchParams(null, "vegan", null, null)))
                 .thenReturn(List.of(buildNamedDTO()));
 
-        mockMvc.perform(get("/recipe/search").param("tag", "vegan"))
+        mockMvc.perform(get("/recipe/search").header("X-Api-Key", "test-api-key").param("tag", "vegan"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isNotEmpty());
     }
@@ -173,7 +184,7 @@ class RecipeControllerTest {
         when(recipeService.search(new RecipeSearchParams(null, null, "italian", null)))
                 .thenReturn(List.of(buildNamedDTO()));
 
-        mockMvc.perform(get("/recipe/search").param("cuisine", "italian"))
+        mockMvc.perform(get("/recipe/search").header("X-Api-Key", "test-api-key").param("cuisine", "italian"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isNotEmpty());
     }
@@ -183,7 +194,7 @@ class RecipeControllerTest {
         when(recipeService.search(new RecipeSearchParams(null, null, null, "flour")))
                 .thenReturn(List.of(buildNamedDTO()));
 
-        mockMvc.perform(get("/recipe/search").param("ingredient", "flour"))
+        mockMvc.perform(get("/recipe/search").header("X-Api-Key", "test-api-key").param("ingredient", "flour"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isNotEmpty());
     }
@@ -193,7 +204,7 @@ class RecipeControllerTest {
         when(recipeService.search(new RecipeSearchParams("pasta", "vegan", null, null)))
                 .thenReturn(List.of(buildNamedDTO()));
 
-        mockMvc.perform(get("/recipe/search").param("name", "pasta").param("tag", "vegan"))
+        mockMvc.perform(get("/recipe/search").header("X-Api-Key", "test-api-key").param("name", "pasta").param("tag", "vegan"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isNotEmpty());
     }
@@ -203,7 +214,13 @@ class RecipeControllerTest {
         when(recipeService.search(new RecipeSearchParams("xyz", null, null, null)))
                 .thenReturn(List.of());
 
-        mockMvc.perform(get("/recipe/search").param("name", "xyz"))
+        mockMvc.perform(get("/recipe/search").header("X-Api-Key", "test-api-key").param("name", "xyz"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void missingApiKey_returnsUnauthorized() throws Exception {
+        mockMvc.perform(get("/recipe/list"))
+                .andExpect(status().isUnauthorized());
     }
 }

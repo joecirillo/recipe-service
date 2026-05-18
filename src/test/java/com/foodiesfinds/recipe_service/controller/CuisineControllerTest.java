@@ -1,6 +1,8 @@
 package com.foodiesfinds.recipe_service.controller;
 
+import com.foodiesfinds.recipe_service.core.config.ApiKeyProperties;
 import com.foodiesfinds.recipe_service.core.exception.GlobalExceptionHandler;
+import com.foodiesfinds.recipe_service.core.filter.ApiKeyFilter;
 import com.foodiesfinds.recipe_service.core.response.ErrorResponseFactory;
 import com.foodiesfinds.recipe_service.core.response.ResponseFactory;
 import com.foodiesfinds.recipe_service.dto.CuisineResponseDTO;
@@ -22,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CuisineController.class)
-@Import({ResponseFactory.class, GlobalExceptionHandler.class, ErrorResponseFactory.class})
+@Import({ResponseFactory.class, GlobalExceptionHandler.class, ErrorResponseFactory.class, ApiKeyFilter.class, ApiKeyProperties.class})
 @ActiveProfiles("test")
 class CuisineControllerTest {
 
@@ -43,7 +45,7 @@ class CuisineControllerTest {
     void getCuisines() throws Exception {
         when(cuisineService.list()).thenReturn(List.of(buildCuisineDTO()));
 
-        mockMvc.perform(get("/cuisine/list"))
+        mockMvc.perform(get("/cuisine/list").header("X-Api-Key", "test-api-key"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isNotEmpty());
     }
@@ -52,7 +54,7 @@ class CuisineControllerTest {
     void searchCuisines() throws Exception {
         when(cuisineService.search("ital")).thenReturn(List.of(new NamedEntityDTO(1L, "Italian")));
 
-        mockMvc.perform(get("/cuisine/search").param("query", "ital"))
+        mockMvc.perform(get("/cuisine/search").header("X-Api-Key", "test-api-key").param("query", "ital"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isNotEmpty());
     }
@@ -61,7 +63,13 @@ class CuisineControllerTest {
     void searchCuisines_emptyResults() throws Exception {
         when(cuisineService.search("xyz")).thenReturn(List.of());
 
-        mockMvc.perform(get("/cuisine/search").param("query", "xyz"))
+        mockMvc.perform(get("/cuisine/search").header("X-Api-Key", "test-api-key").param("query", "xyz"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void missingApiKey_returnsUnauthorized() throws Exception {
+        mockMvc.perform(get("/cuisine/list"))
+                .andExpect(status().isUnauthorized());
     }
 }
