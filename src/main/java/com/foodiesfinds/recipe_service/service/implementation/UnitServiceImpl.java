@@ -1,8 +1,9 @@
 package com.foodiesfinds.recipe_service.service.implementation;
 
 import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
-import com.foodiesfinds.recipe_service.dto.NamedEntityDTO;
+import com.foodiesfinds.recipe_service.dto.UnitResponseDTO;
 import com.foodiesfinds.recipe_service.entity.Unit;
+import com.foodiesfinds.recipe_service.mapper.UnitMapper;
 import com.foodiesfinds.recipe_service.repository.UnitRepository;
 import com.foodiesfinds.recipe_service.service.UnitService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.List;
 public class UnitServiceImpl implements UnitService {
 
     private final UnitRepository unitRepository;
+    private final UnitMapper unitMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -26,9 +28,9 @@ public class UnitServiceImpl implements UnitService {
     }
 
     @Override
-    public List<NamedEntityDTO> list() {
+    public List<UnitResponseDTO> list() {
         return unitRepository.findAll().stream()
-                .map(u -> new NamedEntityDTO(u.getId(), u.getName()))
+                .map(unitMapper::toDTO)
                 .toList();
     }
 

@@ -5,7 +5,7 @@ import com.foodiesfinds.recipe_service.core.exception.GlobalExceptionHandler;
 import com.foodiesfinds.recipe_service.core.filter.ApiKeyFilter;
 import com.foodiesfinds.recipe_service.core.response.ErrorResponseFactory;
 import com.foodiesfinds.recipe_service.core.response.ResponseFactory;
-import com.foodiesfinds.recipe_service.dto.NamedEntityDTO;
+import com.foodiesfinds.recipe_service.dto.UnitResponseDTO;
 import com.foodiesfinds.recipe_service.service.UnitService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ class UnitControllerTest {
 
     @Test
     void getUnits() throws Exception {
-        when(unitService.list()).thenReturn(List.of(new NamedEntityDTO(1L, "cup")));
+        when(unitService.list()).thenReturn(List.of(new UnitResponseDTO(1L, "cup", "c")));
 
         mockMvc.perform(get("/unit/list").header("X-Api-Key", "test-api-key"))
                 .andExpect(status().isOk())
