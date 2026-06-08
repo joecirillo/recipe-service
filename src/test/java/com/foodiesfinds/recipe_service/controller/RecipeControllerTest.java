@@ -7,6 +7,7 @@ import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
 import com.foodiesfinds.recipe_service.core.filter.ApiKeyFilter;
 import com.foodiesfinds.recipe_service.core.response.ErrorResponseFactory;
 import com.foodiesfinds.recipe_service.core.response.ResponseFactory;
+import com.foodiesfinds.recipe_service.dto.CuisineResponseDTO;
 import com.foodiesfinds.recipe_service.dto.NamedEntityDTO;
 import com.foodiesfinds.recipe_service.dto.RecipeSearchParams;
 import com.foodiesfinds.recipe_service.dto.ingredient.RecipeIngredientSaveDTO;
@@ -64,6 +65,9 @@ class RecipeControllerTest {
         dto.setServings((short) 2);
         dto.setCookingTime((short) 15);
         dto.setPreparationTime((short) 10);
+        CuisineResponseDTO cuisine = new CuisineResponseDTO();
+        cuisine.setName("Italian");
+        dto.setCuisine(cuisine);
 
         RecipeIngredientSaveDTO ingredient = new RecipeIngredientSaveDTO();
         ingredient.setName("Noodles");
@@ -106,7 +110,8 @@ class RecipeControllerTest {
                         .content(objectMapper.writeValueAsString(buildValidSaveDTO())))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
-                .andExpect(jsonPath("$.id").value(1L));
+                .andExpect(jsonPath("$.message").value("Recipe saved"))
+                .andExpect(jsonPath("$.data.id").value(1L));
     }
 
     @Test
