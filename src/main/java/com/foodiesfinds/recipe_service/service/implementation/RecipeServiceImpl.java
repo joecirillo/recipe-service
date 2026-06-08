@@ -83,9 +83,9 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<NamedEntityDTO> list(int limit) {
-        log.info("Fetching the first {} recipes", limit);
-        List<Recipe> recipes = recipeRepository.findAll(PageRequest.of(0, limit)).toList();
+    public List<NamedEntityDTO> list(int page, int limit) {
+        log.info("Fetching {} recipes for page {}", limit, page);
+        List<Recipe> recipes = recipeRepository.findAll(PageRequest.of(page, limit)).toList();
         return recipes.stream()
                 .map(recipe -> new NamedEntityDTO(recipe.getId(), recipe.getName()))
                 .toList();

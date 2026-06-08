@@ -78,10 +78,20 @@ class RecipeControllerTest {
     }
 
     @Test
-    void getRecipes() throws Exception {
-        when(recipeService.list(30)).thenReturn(List.of(buildNamedDTO(), buildNamedDTO()));
+    void getRecipes_defaultPagination() throws Exception {
+        when(recipeService.list(0, 12)).thenReturn(List.of(buildNamedDTO(), buildNamedDTO()));
 
         mockMvc.perform(get("/recipe/list").header("X-Api-Key", "test-api-key"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isNotEmpty());
+    }
+
+    @Test
+    void getRecipes_customPagination() throws Exception {
+        when(recipeService.list(1, 6)).thenReturn(List.of(buildNamedDTO()));
+
+        mockMvc.perform(get("/recipe/list").header("X-Api-Key", "test-api-key")
+                        .param("page", "1").param("limit", "6"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isNotEmpty());
     }
@@ -161,7 +171,7 @@ class RecipeControllerTest {
 
     @Test
     void searchRecipes_byName() throws Exception {
-        when(recipeService.search(new RecipeSearchParams("pasta", null, null, null)))
+        when(recipeService.search(new RecipeSearchParams("pasta", null, null, null, null, null, null)))
                 .thenReturn(List.of(buildNamedDTO()));
 
         mockMvc.perform(get("/recipe/search").header("X-Api-Key", "test-api-key").param("name", "pasta"))
@@ -171,7 +181,7 @@ class RecipeControllerTest {
 
     @Test
     void searchRecipes_byTag() throws Exception {
-        when(recipeService.search(new RecipeSearchParams(null, "vegan", null, null)))
+        when(recipeService.search(new RecipeSearchParams(null, "vegan", null, null, null, null, null)))
                 .thenReturn(List.of(buildNamedDTO()));
 
         mockMvc.perform(get("/recipe/search").header("X-Api-Key", "test-api-key").param("tag", "vegan"))
@@ -181,7 +191,7 @@ class RecipeControllerTest {
 
     @Test
     void searchRecipes_byCuisine() throws Exception {
-        when(recipeService.search(new RecipeSearchParams(null, null, "italian", null)))
+        when(recipeService.search(new RecipeSearchParams(null, null, "italian", null, null, null, null)))
                 .thenReturn(List.of(buildNamedDTO()));
 
         mockMvc.perform(get("/recipe/search").header("X-Api-Key", "test-api-key").param("cuisine", "italian"))
@@ -191,7 +201,7 @@ class RecipeControllerTest {
 
     @Test
     void searchRecipes_byIngredient() throws Exception {
-        when(recipeService.search(new RecipeSearchParams(null, null, null, "flour")))
+        when(recipeService.search(new RecipeSearchParams(null, null, null, "flour", null, null, null)))
                 .thenReturn(List.of(buildNamedDTO()));
 
         mockMvc.perform(get("/recipe/search").header("X-Api-Key", "test-api-key").param("ingredient", "flour"))
@@ -201,7 +211,7 @@ class RecipeControllerTest {
 
     @Test
     void searchRecipes_multipleFilters() throws Exception {
-        when(recipeService.search(new RecipeSearchParams("pasta", "vegan", null, null)))
+        when(recipeService.search(new RecipeSearchParams("pasta", "vegan", null, null, null, null, null)))
                 .thenReturn(List.of(buildNamedDTO()));
 
         mockMvc.perform(get("/recipe/search").header("X-Api-Key", "test-api-key").param("name", "pasta").param("tag", "vegan"))
@@ -211,7 +221,7 @@ class RecipeControllerTest {
 
     @Test
     void searchRecipes_emptyResults() throws Exception {
-        when(recipeService.search(new RecipeSearchParams("xyz", null, null, null)))
+        when(recipeService.search(new RecipeSearchParams("xyz", null, null, null, null, null, null)))
                 .thenReturn(List.of());
 
         mockMvc.perform(get("/recipe/search").header("X-Api-Key", "test-api-key").param("name", "xyz"))
