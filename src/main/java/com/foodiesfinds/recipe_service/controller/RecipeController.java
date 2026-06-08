@@ -26,9 +26,11 @@ public class RecipeController {
     private final ResponseFactory response;
 
     @GetMapping("/list")
-    public ResponseEntity<Response> getRecipes() {
+    public ResponseEntity<Response> getRecipes(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int limit) {
         return response.buildResponse(OK, "Recipes retrieved",
-                recipeService.list(30));
+                recipeService.list(page, limit));
     }
 
     @PostMapping("/save")
@@ -71,9 +73,12 @@ public class RecipeController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String tag,
             @RequestParam(required = false) String cuisine,
-            @RequestParam(required = false) String ingredient) {
+            @RequestParam(required = false) String ingredient,
+            @RequestParam(required = false) Long tagId,
+            @RequestParam(required = false) Long cuisineId,
+            @RequestParam(required = false) Long ingredientId) {
         return response.buildResponse(OK, "Recipes queried",
-                recipeService.search(new RecipeSearchParams(name, tag, cuisine, ingredient)));
+                recipeService.search(new RecipeSearchParams(name, tag, cuisine, ingredient, tagId, cuisineId, ingredientId)));
     }
 
 }

@@ -13,7 +13,7 @@ public interface RecipeService {
 
     RecipeResponseDTO save(RecipeSaveDTO recipeDTO);
 
-    List<NamedEntityDTO> list(int limit);
+    List<NamedEntityDTO> list(int page, int limit);
 
     RecipeResponseDTO get(Long id);
 

@@ -123,7 +123,7 @@ class RecipeServiceImplTest {
         recipe.setName("Pasta");
         when(recipeRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(recipe)));
 
-        List<NamedEntityDTO> result = recipeService.list(30);
+        List<NamedEntityDTO> result = recipeService.list(0, 30);
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getId()).isEqualTo(1L);
@@ -134,7 +134,7 @@ class RecipeServiceImplTest {
     void list_returnsEmpty_whenNoRecipes() {
         when(recipeRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of()));
 
-        List<NamedEntityDTO> result = recipeService.list(30);
+        List<NamedEntityDTO> result = recipeService.list(0, 30);
 
         assertThat(result).isEmpty();
     }
@@ -190,7 +190,7 @@ class RecipeServiceImplTest {
         recipe.setName("Pasta Bolognese");
         when(recipeRepository.findAll(any(Specification.class))).thenReturn(List.of(recipe));
 
-        List<NamedEntityDTO> result = recipeService.search(new RecipeSearchParams("pasta", null, null, null));
+        List<NamedEntityDTO> result = recipeService.search(new RecipeSearchParams("pasta", null, null, null, null, null, null));
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getId()).isEqualTo(1L);
@@ -201,7 +201,7 @@ class RecipeServiceImplTest {
     void search_returnsEmpty_whenNoMatches() {
         when(recipeRepository.findAll(any(Specification.class))).thenReturn(List.of());
 
-        List<NamedEntityDTO> result = recipeService.search(new RecipeSearchParams("xyz", null, null, null));
+        List<NamedEntityDTO> result = recipeService.search(new RecipeSearchParams("xyz", null, null, null, null, null, null));
 
         assertThat(result).isEmpty();
     }
@@ -213,7 +213,7 @@ class RecipeServiceImplTest {
         recipe.setName("Vegan Pasta");
         when(recipeRepository.findAll(any(Specification.class))).thenReturn(List.of(recipe));
 
-        List<NamedEntityDTO> result = recipeService.search(new RecipeSearchParams("pasta", "vegan", null, null));
+        List<NamedEntityDTO> result = recipeService.search(new RecipeSearchParams("pasta", "vegan", null, null, null, null, null));
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getId()).isEqualTo(2L);
