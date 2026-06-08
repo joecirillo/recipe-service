@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
 import java.time.Instant;
 
 
@@ -13,6 +14,18 @@ public class ResponseFactory {
 
     public ResponseEntity<Response> buildResponse(HttpStatus status, String message, Object data) {
         return ResponseEntity.status(status)
+                .body(Response.builder()
+                        .timeStamp(Instant.now())
+                        .data(data)
+                        .message(message)
+                        .status(status)
+                        .build()
+                );
+    }
+
+    public ResponseEntity<Response> buildResponse(HttpStatus status, String message, Object data, URI location) {
+        return ResponseEntity.status(status)
+                .location(location)
                 .body(Response.builder()
                         .timeStamp(Instant.now())
                         .data(data)

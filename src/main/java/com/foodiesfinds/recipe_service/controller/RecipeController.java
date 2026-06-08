@@ -13,6 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
+
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 
@@ -34,19 +37,17 @@ public class RecipeController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<RecipeResponseDTO> saveRecipe(@RequestBody @Valid RecipeSaveDTO recipe) {
+    public ResponseEntity<Response> saveRecipe(@RequestBody @Valid RecipeSaveDTO recipe) {
 
         RecipeResponseDTO savedRecipe = recipeService.save(recipe);
 
-        java.net.URI location = ServletUriComponentsBuilder
+        URI location = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
                 .path("/{id}")
                 .buildAndExpand(savedRecipe.getId())
                 .toUri();
 
-        return ResponseEntity
-                .created(location)
-                .body(savedRecipe);
+        return response.buildResponse(CREATED, "Recipe saved", savedRecipe, location);
     }
 
     @GetMapping("/get/{id}")

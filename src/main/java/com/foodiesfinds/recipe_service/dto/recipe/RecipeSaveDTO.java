@@ -1,5 +1,6 @@
 package com.foodiesfinds.recipe_service.dto.recipe;
 
+import com.foodiesfinds.recipe_service.dto.CuisineResponseDTO;
 import com.foodiesfinds.recipe_service.dto.base.BaseRecipeDTO;
 import com.foodiesfinds.recipe_service.dto.ingredient.RecipeIngredientSaveDTO;
 import com.foodiesfinds.recipe_service.dto.instruction.InstructionStepSaveDTO;
@@ -24,8 +25,6 @@ public class RecipeSaveDTO extends BaseRecipeDTO<
         > {
 
     @Override
-    @NotNull
-    @Positive(message = "Calories must be a positive value.")
     public Short getCalories() {
         return super.getCalories();
     }
@@ -69,6 +68,12 @@ public class RecipeSaveDTO extends BaseRecipeDTO<
     @NotNull(message = "Recipe name is required.")
     public String getName() {
         return super.getName();
+    }
+
+    @Override
+    @NotNull(message = "Cuisine is required.")
+    public CuisineResponseDTO getCuisine() {
+        return super.getCuisine();
     }
 
 }
