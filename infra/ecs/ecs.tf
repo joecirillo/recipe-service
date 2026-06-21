@@ -78,12 +78,4 @@ resource "aws_ecs_service" "recipe_service" {
     security_groups  = [aws_security_group.ecs.id]
     assign_public_ip = true
   }
-
-  load_balancer {
-    target_group_arn = aws_lb_target_group.main.arn
-    container_name   = var.app_name
-    container_port   = var.app_port
-  }
-
-  depends_on = [aws_lb_listener.http]
 }
