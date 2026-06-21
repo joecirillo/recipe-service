@@ -72,11 +72,9 @@ resource "aws_iam_role_policy" "task_ssm" {
   policy = data.aws_iam_policy_document.task_ssm.json
 }
 
-# GitHub Actions OIDC — allows CI to assume a deploy role without long-lived keys
-resource "aws_iam_openid_connect_provider" "github" {
-  url             = "https://token.actions.githubusercontent.com"
-  client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = ["6938fd4d98bab03faadb97b34396831e3780aea1"]
+# GitHub Actions OIDC — references the provider created in the lightsail setup
+data "aws_iam_openid_connect_provider" "github" {
+  url = "https://token.actions.githubusercontent.com"
 }
 
 data "aws_iam_policy_document" "github_actions_trust" {
@@ -84,7 +82,7 @@ data "aws_iam_policy_document" "github_actions_trust" {
     actions = ["sts:AssumeRoleWithWebIdentity"]
     principals {
       type        = "Federated"
-      identifiers = [aws_iam_openid_connect_provider.github.arn]
+      identifiers = [data.aws_iam_openid_connect_provider.github.arn]
     }
     condition {
       test     = "StringEquals"
@@ -105,11 +103,9 @@ resource "aws_iam_role" "github_actions_deploy" {
 }
 
 data "aws_iam_policy_document" "github_actions_deploy" {
-  # ECR: authenticate, push images
+  # ECR: authenticate and push images
   statement {
-    actions = [
-      "ecr:GetAuthorizationToken",
-    ]
+    actions   = ["ecr:GetAuthorizationToken"]
     resources = ["*"]
   }
   statement {
@@ -136,7 +132,7 @@ data "aws_iam_policy_document" "github_actions_deploy" {
   }
   # Allow passing the task roles to ECS
   statement {
-    actions   = ["iam:PassRole"]
+    actions = ["iam:PassRole"]
     resources = [
       aws_iam_role.task_execution.arn,
       aws_iam_role.task.arn,

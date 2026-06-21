@@ -1,6 +1,6 @@
-output "alb_dns_name" {
-  description = "Public URL of the load balancer"
-  value       = "http://${aws_lb.main.dns_name}"
+output "lightsail_url" {
+  description = "Public URL of the Lightsail container service"
+  value       = "https://${aws_lightsail_container_service.recipe_service.url}"
 }
 
 output "ecr_repository_url" {

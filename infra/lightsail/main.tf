@@ -5,7 +5,7 @@ terraform {
 
   backend "s3" {
     bucket         = "foodies-finds-tfstate"
-    key            = "recipe-service/terraform.tfstate"
+    key            = "recipe-service/lightsail/terraform.tfstate"
     region         = "us-east-2"
     dynamodb_table = "foodies-finds-tfstate-lock"
     encrypt        = true
