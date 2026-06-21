@@ -4,7 +4,7 @@ spring:
   cloud:
     aws:
       region:
-        static: us-east-2
+        static: us-west-2
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
