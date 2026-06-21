@@ -15,7 +15,7 @@ public class ResponseFactory {
     public ResponseEntity<Response> buildResponse(HttpStatus status, String message, Object data) {
         return ResponseEntity.status(status)
                 .body(Response.builder()
-                        .timeStamp(Instant.now())
+                        .timestamp(Instant.now())
                         .data(data)
                         .message(message)
                         .status(status)
@@ -27,7 +27,7 @@ public class ResponseFactory {
         return ResponseEntity.status(status)
                 .location(location)
                 .body(Response.builder()
-                        .timeStamp(Instant.now())
+                        .timestamp(Instant.now())
                         .data(data)
                         .message(message)
                         .status(status)
