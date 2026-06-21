@@ -12,7 +12,7 @@ import java.time.Instant;
 @SuperBuilder
 @JsonInclude(Include.NON_NULL)
 public class Response {
-    protected Instant timeStamp;
+    protected Instant timestamp;
     protected HttpStatus status;
     protected String reason;
     protected String message;
