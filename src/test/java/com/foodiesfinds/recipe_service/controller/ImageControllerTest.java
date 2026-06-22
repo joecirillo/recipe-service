@@ -18,7 +18,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,7 +46,7 @@ class ImageControllerTest {
                 "file", "test.jpg", "image/jpeg", "fake-image-bytes".getBytes()
         );
 
-        mockMvc.perform(multipart("/recipe/image/upload")
+        mockMvc.perform(multipart("/recipe/image")
                         .file(file)
                         .header("X-Api-Key", "test-api-key"))
                 .andExpect(status().isOk())
@@ -58,7 +61,7 @@ class ImageControllerTest {
                 "file", "empty.jpg", "image/jpeg", new byte[0]
         );
 
-        mockMvc.perform(multipart("/recipe/image/upload")
+        mockMvc.perform(multipart("/recipe/image")
                         .file(file)
                         .header("X-Api-Key", "test-api-key"))
                 .andExpect(status().isBadRequest());
@@ -66,13 +69,13 @@ class ImageControllerTest {
 
     @Test
     void uploadImage_invalidContentType_returnsBadRequest() throws Exception {
-        when(imageService.upload(any())).thenThrow(new BadRequestException("Unsupported file type. Allowed: jpeg, png, webp, gif"));
+        when(imageService.upload(any())).thenThrow(new BadRequestException("Unsupported file type. Allowed: jpeg, png, webp, gif, heic, heif"));
 
         MockMultipartFile file = new MockMultipartFile(
                 "file", "document.pdf", "application/pdf", "pdf-bytes".getBytes()
         );
 
-        mockMvc.perform(multipart("/recipe/image/upload")
+        mockMvc.perform(multipart("/recipe/image")
                         .file(file)
                         .header("X-Api-Key", "test-api-key"))
                 .andExpect(status().isBadRequest());
@@ -84,8 +87,35 @@ class ImageControllerTest {
                 "file", "test.jpg", "image/jpeg", "fake-image-bytes".getBytes()
         );
 
-        mockMvc.perform(multipart("/recipe/image/upload")
+        mockMvc.perform(multipart("/recipe/image")
                         .file(file))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void deleteImage_success() throws Exception {
+        doNothing().when(imageService).delete(any());
+
+        mockMvc.perform(delete("/recipe/image")
+                        .param("key", "recipes/some-uuid.jpg")
+                        .header("X-Api-Key", "test-api-key"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteImage_invalidKey_returnsBadRequest() throws Exception {
+        doThrow(new BadRequestException("Invalid image key")).when(imageService).delete(any());
+
+        mockMvc.perform(delete("/recipe/image")
+                        .param("key", "other/some-file.jpg")
+                        .header("X-Api-Key", "test-api-key"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void deleteImage_missingApiKey_returnsUnauthorized() throws Exception {
+        mockMvc.perform(delete("/recipe/image")
+                        .param("key", "recipes/some-uuid.jpg"))
                 .andExpect(status().isUnauthorized());
     }
 }

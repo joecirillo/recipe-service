@@ -12,6 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -84,6 +86,32 @@ class ImageServiceImplTest {
     }
 
     @Test
+    void upload_heic_success() {
+        when(s3Properties.getBucketName()).thenReturn("test-bucket");
+
+        MockMultipartFile file = new MockMultipartFile(
+                "file", "photo.heic", "image/heic", "image-data".getBytes()
+        );
+
+        String url = imageService.upload(file);
+
+        assertThat(url).endsWith(".heic");
+    }
+
+    @Test
+    void upload_heif_success() {
+        when(s3Properties.getBucketName()).thenReturn("test-bucket");
+
+        MockMultipartFile file = new MockMultipartFile(
+                "file", "photo.heif", "image/heif", "image-data".getBytes()
+        );
+
+        String url = imageService.upload(file);
+
+        assertThat(url).endsWith(".heif");
+    }
+
+    @Test
     void upload_noExtension_defaultsToJpg() {
         when(s3Properties.getBucketName()).thenReturn("test-bucket");
 
@@ -94,5 +122,39 @@ class ImageServiceImplTest {
         String url = imageService.upload(file);
 
         assertThat(url).endsWith(".jpg");
+    }
+
+    @Test
+    void delete_success_callsS3DeleteObject() {
+        when(s3Properties.getBucketName()).thenReturn("test-bucket");
+        when(s3Client.deleteObject(any(DeleteObjectRequest.class))).thenReturn(DeleteObjectResponse.builder().build());
+
+        imageService.delete("recipes/some-uuid.jpg");
+
+        ArgumentCaptor<DeleteObjectRequest> captor = ArgumentCaptor.forClass(DeleteObjectRequest.class);
+        verify(s3Client).deleteObject(captor.capture());
+        assertThat(captor.getValue().bucket()).isEqualTo("test-bucket");
+        assertThat(captor.getValue().key()).isEqualTo("recipes/some-uuid.jpg");
+    }
+
+    @Test
+    void delete_blankKey_throwsBadRequest() {
+        assertThatThrownBy(() -> imageService.delete("  "))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessageContaining("empty");
+    }
+
+    @Test
+    void delete_nullKey_throwsBadRequest() {
+        assertThatThrownBy(() -> imageService.delete(null))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessageContaining("empty");
+    }
+
+    @Test
+    void delete_invalidKey_throwsBadRequest() {
+        assertThatThrownBy(() -> imageService.delete("other/some-file.jpg"))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessageContaining("Invalid image key");
     }
 }
