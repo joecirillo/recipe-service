@@ -21,3 +21,7 @@ variable "task_memory" {
 variable "github_repo" {
   description = "GitHub org/repo used for OIDC trust policy, e.g. joecirillo/recipe-service"
 }
+
+variable "S3_BUCKET_NAME" {
+  default = "foodies-finds-recipe-images"
+}

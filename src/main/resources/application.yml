@@ -19,3 +19,6 @@ api:
   keys:
     user: ${API_KEY}
     admin: ${API_KEY_ADMIN}
+
+s3:
+  bucketName: ${S3_BUCKET_NAME}

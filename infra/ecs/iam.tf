@@ -72,6 +72,22 @@ resource "aws_iam_role_policy" "task_ssm" {
   policy = data.aws_iam_policy_document.task_ssm.json
 }
 
+resource "aws_iam_role_policy" "task_s3" {
+  name = "${var.app_name}-s3-policy"
+  role = aws_iam_role.task.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = "s3:PutObject"
+        Resource = "${aws_s3_bucket.recipe_images.arn}/recipes/*"
+      }
+    ]
+  })
+}
+
 # GitHub Actions OIDC — references the provider created in the lightsail setup
 data "aws_iam_openid_connect_provider" "github" {
   url = "https://token.actions.githubusercontent.com"

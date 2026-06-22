@@ -14,8 +14,13 @@ spring:
     aws:
       parameterstore:
         enabled: false
+      s3:
+        enabled: false
 
 api:
   keys:
     user: test-api-key
     admin: test-admin-key
+
+s3:
+  bucketName: test-bucket
