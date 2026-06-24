@@ -20,6 +20,13 @@ resource "aws_ecs_task_definition" "recipe_service" {
       name  = var.app_name
       image = "${aws_ecr_repository.recipe_service.repository_url}:latest"
 
+      environment = [
+        {
+          name  = "S3_BUCKET_NAME"
+          value = var.S3_BUCKET_NAME
+        }
+      ]
+
       portMappings = [
         {
           containerPort = var.app_port

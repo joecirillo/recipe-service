@@ -1,6 +1,10 @@
 spring:
   config:
     import: "optional:aws-parameterstore:/foodies-finds/recipe-service/"
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 25MB
   cloud:
     aws:
       region:
@@ -19,3 +23,6 @@ api:
   keys:
     user: ${API_KEY}
     admin: ${API_KEY_ADMIN}
+
+s3:
+  bucketName: ${S3_BUCKET_NAME}
