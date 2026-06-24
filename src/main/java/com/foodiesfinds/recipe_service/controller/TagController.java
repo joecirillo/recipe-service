@@ -13,20 +13,18 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/tag")
+@RequestMapping("/tags")
 @RequiredArgsConstructor
 public class TagController {
 
     private final TagService tagService;
     private final ResponseFactory response;
 
-    @GetMapping("/list")
-    public ResponseEntity<Response> getTags() {
-        return response.buildResponse(OK, "Tags retrieved", tagService.list());
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<Response> searchTags(@RequestParam("query") String query) {
+    @GetMapping
+    public ResponseEntity<Response> getTags(@RequestParam(required = false) String query) {
+        if (query == null || query.isBlank()) {
+            return response.buildResponse(OK, "Tags retrieved", tagService.list());
+        }
         return response.buildResponse(OK, "Tags queried", tagService.search(query));
     }
 

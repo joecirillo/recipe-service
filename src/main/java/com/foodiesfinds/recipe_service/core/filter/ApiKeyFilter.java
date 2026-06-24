@@ -29,7 +29,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         String apiKey = request.getHeader("X-Api-Key");
         boolean isAdminEndpoint = request.getMethod().equalsIgnoreCase("DELETE")
-                && request.getRequestURI().startsWith("/recipe/delete/");
+                && request.getRequestURI().matches("/recipes/\\d+");
 
         if (apiKey != null) {
             String adminKey = apiKeyProperties.getKeys().get("admin");

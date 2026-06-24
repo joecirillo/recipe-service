@@ -45,7 +45,7 @@ class CuisineControllerTest {
     void getCuisines() throws Exception {
         when(cuisineService.list()).thenReturn(List.of(buildCuisineDTO()));
 
-        mockMvc.perform(get("/cuisine/list").header("X-Api-Key", "test-api-key"))
+        mockMvc.perform(get("/cuisines").header("X-Api-Key", "test-api-key"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isNotEmpty());
     }
@@ -54,7 +54,7 @@ class CuisineControllerTest {
     void searchCuisines() throws Exception {
         when(cuisineService.search("ital")).thenReturn(List.of(new NamedEntityDTO(1L, "Italian")));
 
-        mockMvc.perform(get("/cuisine/search").header("X-Api-Key", "test-api-key").param("query", "ital"))
+        mockMvc.perform(get("/cuisines").header("X-Api-Key", "test-api-key").param("query", "ital"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isNotEmpty());
     }
@@ -63,13 +63,13 @@ class CuisineControllerTest {
     void searchCuisines_emptyResults() throws Exception {
         when(cuisineService.search("xyz")).thenReturn(List.of());
 
-        mockMvc.perform(get("/cuisine/search").header("X-Api-Key", "test-api-key").param("query", "xyz"))
+        mockMvc.perform(get("/cuisines").header("X-Api-Key", "test-api-key").param("query", "xyz"))
                 .andExpect(status().isOk());
     }
 
     @Test
     void missingApiKey_returnsUnauthorized() throws Exception {
-        mockMvc.perform(get("/cuisine/list"))
+        mockMvc.perform(get("/cuisines"))
                 .andExpect(status().isUnauthorized());
     }
 }

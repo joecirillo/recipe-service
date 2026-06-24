@@ -20,7 +20,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 
 @RestController
-@RequestMapping("/recipe")
+@RequestMapping("/recipes")
 @RequiredArgsConstructor
 public class RecipeController {
 
@@ -28,15 +28,27 @@ public class RecipeController {
 
     private final ResponseFactory response;
 
-    @GetMapping("/list")
+    @GetMapping
     public ResponseEntity<Response> getRecipes(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "12") int limit) {
-        return response.buildResponse(OK, "Recipes retrieved",
-                recipeService.list(page, limit));
+            @RequestParam(defaultValue = "12") int limit,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String tag,
+            @RequestParam(required = false) String cuisine,
+            @RequestParam(required = false) String ingredient,
+            @RequestParam(required = false) Long tagId,
+            @RequestParam(required = false) Long cuisineId,
+            @RequestParam(required = false) Long ingredientId) {
+        if (name == null && tag == null && cuisine == null && ingredient == null
+                && tagId == null && cuisineId == null && ingredientId == null) {
+            return response.buildResponse(OK, "Recipes retrieved",
+                    recipeService.list(page, limit));
+        }
+        return response.buildResponse(OK, "Recipes queried",
+                recipeService.search(new RecipeSearchParams(name, tag, cuisine, ingredient, tagId, cuisineId, ingredientId)));
     }
 
-    @PostMapping("/save")
+    @PostMapping
     public ResponseEntity<Response> saveRecipe(@RequestBody @Valid RecipeSaveDTO recipe) {
 
         RecipeResponseDTO savedRecipe = recipeService.save(recipe);
@@ -50,36 +62,23 @@ public class RecipeController {
         return response.buildResponse(CREATED, "Recipe saved", savedRecipe, location);
     }
 
-    @GetMapping("/get/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Response> getRecipe(@PathVariable("id") Long id) {
         return response.buildResponse(OK, "Recipe retrieved",
                 recipeService.get(id));
     }
 
-    @PatchMapping("/update/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<Response> updateRecipe(@RequestBody @Valid RecipeUpdateDTO recipe,
                                                  @PathVariable("id") Long id) {
         return response.buildResponse(OK, "Recipe updated",
                 recipeService.update(recipe, id));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRecipe(@PathVariable("id") Long id) {
         recipeService.delete(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<Response> searchRecipes(
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String tag,
-            @RequestParam(required = false) String cuisine,
-            @RequestParam(required = false) String ingredient,
-            @RequestParam(required = false) Long tagId,
-            @RequestParam(required = false) Long cuisineId,
-            @RequestParam(required = false) Long ingredientId) {
-        return response.buildResponse(OK, "Recipes queried",
-                recipeService.search(new RecipeSearchParams(name, tag, cuisine, ingredient, tagId, cuisineId, ingredientId)));
     }
 
 }

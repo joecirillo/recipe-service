@@ -45,7 +45,7 @@ class IngredientControllerTest {
     void getIngredients() throws Exception {
         when(ingredientService.list()).thenReturn(List.of(buildIngredientDTO()));
 
-        mockMvc.perform(get("/ingredient/list").header("X-Api-Key", "test-api-key"))
+        mockMvc.perform(get("/ingredients").header("X-Api-Key", "test-api-key"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isNotEmpty());
     }
@@ -54,7 +54,7 @@ class IngredientControllerTest {
     void searchIngredients() throws Exception {
         when(ingredientService.search("flo")).thenReturn(List.of(new NamedEntityDTO(1L, "flour")));
 
-        mockMvc.perform(get("/ingredient/search").header("X-Api-Key", "test-api-key").param("query", "flo"))
+        mockMvc.perform(get("/ingredients").header("X-Api-Key", "test-api-key").param("query", "flo"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isNotEmpty());
     }
@@ -63,13 +63,13 @@ class IngredientControllerTest {
     void searchIngredients_emptyResults() throws Exception {
         when(ingredientService.search("xyz")).thenReturn(List.of());
 
-        mockMvc.perform(get("/ingredient/search").header("X-Api-Key", "test-api-key").param("query", "xyz"))
+        mockMvc.perform(get("/ingredients").header("X-Api-Key", "test-api-key").param("query", "xyz"))
                 .andExpect(status().isOk());
     }
 
     @Test
     void missingApiKey_returnsUnauthorized() throws Exception {
-        mockMvc.perform(get("/ingredient/list"))
+        mockMvc.perform(get("/ingredients"))
                 .andExpect(status().isUnauthorized());
     }
 }
