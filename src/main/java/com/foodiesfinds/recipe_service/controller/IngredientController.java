@@ -13,20 +13,18 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/ingredient")
+@RequestMapping("/ingredients")
 @RequiredArgsConstructor
 public class IngredientController {
 
     private final IngredientService ingredientService;
     private final ResponseFactory response;
 
-    @GetMapping("/list")
-    public ResponseEntity<Response> getIngredients() {
-        return response.buildResponse(OK, "Ingredients retrieved", ingredientService.list());
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<Response> searchIngredients(@RequestParam("query") String query) {
+    @GetMapping
+    public ResponseEntity<Response> getIngredients(@RequestParam(required = false) String query) {
+        if (query == null || query.isBlank()) {
+            return response.buildResponse(OK, "Ingredients retrieved", ingredientService.list());
+        }
         return response.buildResponse(OK, "Ingredients queried", ingredientService.search(query));
     }
 

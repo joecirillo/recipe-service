@@ -46,7 +46,7 @@ class ImageControllerTest {
                 "file", "test.jpg", "image/jpeg", "fake-image-bytes".getBytes()
         );
 
-        mockMvc.perform(multipart("/recipe/image")
+        mockMvc.perform(multipart("/recipes/images")
                         .file(file)
                         .header("X-Api-Key", "test-api-key"))
                 .andExpect(status().isOk())
@@ -61,7 +61,7 @@ class ImageControllerTest {
                 "file", "empty.jpg", "image/jpeg", new byte[0]
         );
 
-        mockMvc.perform(multipart("/recipe/image")
+        mockMvc.perform(multipart("/recipes/images")
                         .file(file)
                         .header("X-Api-Key", "test-api-key"))
                 .andExpect(status().isBadRequest());
@@ -75,7 +75,7 @@ class ImageControllerTest {
                 "file", "document.pdf", "application/pdf", "pdf-bytes".getBytes()
         );
 
-        mockMvc.perform(multipart("/recipe/image")
+        mockMvc.perform(multipart("/recipes/images")
                         .file(file)
                         .header("X-Api-Key", "test-api-key"))
                 .andExpect(status().isBadRequest());
@@ -87,7 +87,7 @@ class ImageControllerTest {
                 "file", "test.jpg", "image/jpeg", "fake-image-bytes".getBytes()
         );
 
-        mockMvc.perform(multipart("/recipe/image")
+        mockMvc.perform(multipart("/recipes/images")
                         .file(file))
                 .andExpect(status().isUnauthorized());
     }
@@ -96,7 +96,7 @@ class ImageControllerTest {
     void deleteImage_success() throws Exception {
         doNothing().when(imageService).delete(any());
 
-        mockMvc.perform(delete("/recipe/image")
+        mockMvc.perform(delete("/recipes/images")
                         .param("key", "recipes/some-uuid.jpg")
                         .header("X-Api-Key", "test-api-key"))
                 .andExpect(status().isNoContent());
@@ -106,7 +106,7 @@ class ImageControllerTest {
     void deleteImage_invalidKey_returnsBadRequest() throws Exception {
         doThrow(new BadRequestException("Invalid image key")).when(imageService).delete(any());
 
-        mockMvc.perform(delete("/recipe/image")
+        mockMvc.perform(delete("/recipes/images")
                         .param("key", "other/some-file.jpg")
                         .header("X-Api-Key", "test-api-key"))
                 .andExpect(status().isBadRequest());
@@ -114,7 +114,7 @@ class ImageControllerTest {
 
     @Test
     void deleteImage_missingApiKey_returnsUnauthorized() throws Exception {
-        mockMvc.perform(delete("/recipe/image")
+        mockMvc.perform(delete("/recipes/images")
                         .param("key", "recipes/some-uuid.jpg"))
                 .andExpect(status().isUnauthorized());
     }

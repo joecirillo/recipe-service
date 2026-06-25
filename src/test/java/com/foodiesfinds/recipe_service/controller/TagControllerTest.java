@@ -45,7 +45,7 @@ class TagControllerTest {
     void getTags() throws Exception {
         when(tagService.list()).thenReturn(List.of(buildTagDTO()));
 
-        mockMvc.perform(get("/tag/list").header("X-Api-Key", "test-api-key"))
+        mockMvc.perform(get("/tags").header("X-Api-Key", "test-api-key"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isNotEmpty());
     }
@@ -54,7 +54,7 @@ class TagControllerTest {
     void searchTags() throws Exception {
         when(tagService.search("veg")).thenReturn(List.of(new NamedEntityDTO(1L, "vegan")));
 
-        mockMvc.perform(get("/tag/search").header("X-Api-Key", "test-api-key").param("query", "veg"))
+        mockMvc.perform(get("/tags").header("X-Api-Key", "test-api-key").param("query", "veg"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isNotEmpty());
     }
@@ -63,13 +63,13 @@ class TagControllerTest {
     void searchTags_emptyResults() throws Exception {
         when(tagService.search("xyz")).thenReturn(List.of());
 
-        mockMvc.perform(get("/tag/search").header("X-Api-Key", "test-api-key").param("query", "xyz"))
+        mockMvc.perform(get("/tags").header("X-Api-Key", "test-api-key").param("query", "xyz"))
                 .andExpect(status().isOk());
     }
 
     @Test
     void missingApiKey_returnsUnauthorized() throws Exception {
-        mockMvc.perform(get("/tag/list"))
+        mockMvc.perform(get("/tags"))
                 .andExpect(status().isUnauthorized());
     }
 }

@@ -13,20 +13,18 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/cuisine")
+@RequestMapping("/cuisines")
 @RequiredArgsConstructor
 public class CuisineController {
 
     private final CuisineService cuisineService;
     private final ResponseFactory response;
 
-    @GetMapping("/list")
-    public ResponseEntity<Response> getCuisines() {
-        return response.buildResponse(OK, "Cuisines retrieved", cuisineService.list());
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<Response> searchCuisines(@RequestParam("query") String query) {
+    @GetMapping
+    public ResponseEntity<Response> getCuisines(@RequestParam(required = false) String query) {
+        if (query == null || query.isBlank()) {
+            return response.buildResponse(OK, "Cuisines retrieved", cuisineService.list());
+        }
         return response.buildResponse(OK, "Cuisines queried", cuisineService.search(query));
     }
 

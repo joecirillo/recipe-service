@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/unit")
+@RequestMapping("/units")
 @RequiredArgsConstructor
 public class UnitController {
 
     private final UnitService unitService;
     private final ResponseFactory response;
 
-    @GetMapping("/list")
+    @GetMapping
     public ResponseEntity<Response> getUnits() {
         return response.buildResponse(OK, "Units retrieved", unitService.list());
     }

@@ -37,14 +37,14 @@ class UnitControllerTest {
     void getUnits() throws Exception {
         when(unitService.list()).thenReturn(List.of(new UnitResponseDTO(1L, "cup", "c")));
 
-        mockMvc.perform(get("/unit/list").header("X-Api-Key", "test-api-key"))
+        mockMvc.perform(get("/units").header("X-Api-Key", "test-api-key"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isNotEmpty());
     }
 
     @Test
     void missingApiKey_returnsUnauthorized() throws Exception {
-        mockMvc.perform(get("/unit/list"))
+        mockMvc.perform(get("/units"))
                 .andExpect(status().isUnauthorized());
     }
 }
