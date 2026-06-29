@@ -1,7 +1,7 @@
 package com.foodiesfinds.recipe_service.service;
 
 import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
-import com.foodiesfinds.recipe_service.dto.NamedEntityDTO;
+import com.foodiesfinds.recipe_service.dto.recipe.RecipeListItemDTO;
 import com.foodiesfinds.recipe_service.dto.RecipeSearchParams;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeResponseDTO;
 import com.foodiesfinds.recipe_service.dto.recipe.RecipeSaveDTO;
@@ -13,7 +13,7 @@ public interface RecipeService {
 
     RecipeResponseDTO save(RecipeSaveDTO recipeDTO);
 
-    List<NamedEntityDTO> list(int page, int limit);
+    List<RecipeListItemDTO> list(int page, int limit);
 
     RecipeResponseDTO get(Long id);
 
@@ -21,6 +21,6 @@ public interface RecipeService {
 
     void delete(Long id) throws NotFoundException;
 
-    List<NamedEntityDTO> search(RecipeSearchParams params);
+    List<RecipeListItemDTO> search(RecipeSearchParams params);
 
 }
