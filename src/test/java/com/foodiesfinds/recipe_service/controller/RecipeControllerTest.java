@@ -8,7 +8,7 @@ import com.foodiesfinds.recipe_service.core.filter.ApiKeyFilter;
 import com.foodiesfinds.recipe_service.core.response.ErrorResponseFactory;
 import com.foodiesfinds.recipe_service.core.response.ResponseFactory;
 import com.foodiesfinds.recipe_service.dto.CuisineResponseDTO;
-import com.foodiesfinds.recipe_service.dto.NamedEntityDTO;
+import com.foodiesfinds.recipe_service.dto.recipe.RecipeListItemDTO;
 import com.foodiesfinds.recipe_service.dto.RecipeSearchParams;
 import com.foodiesfinds.recipe_service.dto.ingredient.RecipeIngredientSaveDTO;
 import com.foodiesfinds.recipe_service.dto.instruction.InstructionStepSaveDTO;
@@ -47,8 +47,8 @@ class RecipeControllerTest {
     @MockBean
     RecipeService recipeService;
 
-    private NamedEntityDTO buildNamedDTO() {
-        return new NamedEntityDTO(1L, "Pasta");
+    private RecipeListItemDTO buildNamedDTO() {
+        return new RecipeListItemDTO(1L, "Pasta", null);
     }
 
     private RecipeResponseDTO buildResponseDTO() {

@@ -1,7 +1,7 @@
 package com.foodiesfinds.recipe_service.service.implementation;
 
 import com.foodiesfinds.recipe_service.core.exception.NotFoundException;
-import com.foodiesfinds.recipe_service.dto.NamedEntityDTO;
+import com.foodiesfinds.recipe_service.dto.recipe.RecipeListItemDTO;
 import com.foodiesfinds.recipe_service.dto.RecipeSearchParams;
 import com.foodiesfinds.recipe_service.dto.ingredient.RecipeIngredientUpdateDTO;
 import com.foodiesfinds.recipe_service.dto.instruction.InstructionStepUpdateDTO;
@@ -83,11 +83,11 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<NamedEntityDTO> list(int page, int limit) {
+    public List<RecipeListItemDTO> list(int page, int limit) {
         log.info("Fetching {} recipes for page {}", limit, page);
         List<Recipe> recipes = recipeRepository.findAll(PageRequest.of(page, limit)).toList();
         return recipes.stream()
-                .map(recipe -> new NamedEntityDTO(recipe.getId(), recipe.getName()))
+                .map(recipe -> new RecipeListItemDTO(recipe.getId(), recipe.getName(), recipe.getImageUrl()))
                 .toList();
     }
 
@@ -178,9 +178,9 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<NamedEntityDTO> search(RecipeSearchParams params) {
+    public List<RecipeListItemDTO> search(RecipeSearchParams params) {
         return recipeRepository.findAll(RecipeSpecification.buildFrom(params)).stream()
-                .map(recipe -> new NamedEntityDTO(recipe.getId(), recipe.getName()))
+                .map(recipe -> new RecipeListItemDTO(recipe.getId(), recipe.getName(), recipe.getImageUrl()))
                 .toList();
     }
 
