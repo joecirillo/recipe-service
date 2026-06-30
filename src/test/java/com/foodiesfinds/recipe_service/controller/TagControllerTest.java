@@ -36,8 +36,8 @@ class TagControllerTest {
 
     private TagResponseDTO buildTagDTO() {
         TagResponseDTO dto = new TagResponseDTO();
-        dto.setTagId(1L);
-        dto.setTagName("vegan");
+        dto.setId(1L);
+        dto.setName("vegan");
         return dto;
     }
 

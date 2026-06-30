@@ -1,7 +1,6 @@
 package com.foodiesfinds.recipe_service.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,7 +31,6 @@ public class RecipeIngredient {
     @JoinColumn(name = "unit_id", nullable = false)
     private Unit unit;
 
-    @NotNull
     @Column(name = "quantity", precision = 8, scale = 2, nullable = false)
     private BigDecimal quantity;
 
